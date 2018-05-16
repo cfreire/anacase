@@ -1,6 +1,6 @@
 # ANACASE
 
-Sistema com hardware e software opensource para amostragem de bagagens em tapetes de Raio-X
+Sistema com hardware e software opensource para amostragem de bagagens
 
 ### Requirements
 
