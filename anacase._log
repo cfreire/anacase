@@ -1,0 +1,12 @@
+2018-05-16 23:44:39,516 root	INFO	 starting logger on x86_64
+2018-05-16 23:44:39,517 config	INFO	 success reading config file "anacase.ini"
+2018-05-16 23:44:39,517 root	INFO	 changing _log level to DEBUG
+2018-05-16 23:44:39,518 config	DEBUG	 call function get() key "*" in section [RANDOM] {'percentage_sample': '10', 'loop_sample': '1000'}
+2018-05-16 23:44:39,518 root	INFO	 starting generate random percentage 10 of 1000...
+2018-05-16 23:44:39,518 root	ERROR	 error generating random numbers 10 of 1000
+2018-05-16 23:44:39,518 root	INFO	 only one sample created [1]
+2018-05-16 23:44:39,518 config	DEBUG	 call function get() key "*" in section [LED] {'red_gpio': '20', 'green_gpio': '21', 'green_timeout': '0.5', 'red_timeout': '3.0'}
+2018-05-16 23:44:39,518 config	DEBUG	 call function get() key "*" in section [CAMERA] {'camera_id': '0', 'camera_delay': '2', 'image_width': '800', 'image_height': '480', 'window_title': 'ANACASE', 'gaussian_blur_value': '21', 'threshold_value': '60', 'min_detect_area': '3000', 'beam_position': '500', 'beam_dead_zone': '10', 'time_min_delta': '2.8'}
+2018-05-16 23:44:39,518 leds	WARNING	 no support for led on platform x86_64
+2018-05-16 23:44:39,518 camera	INFO	 starting v4l on camera id "0"
+2018-05-16 23:44:44,042 camera	INFO	     ... end ...
