@@ -61,4 +61,4 @@ if __name__ == "__main__":
     logging.basicConfig()
     logging.getLogger().setLevel(logging.DEBUG)
     cfg = Config('anacase.ini')
-    cfg.get_str('GLOBAL', 'percentage_sample')
+    cfg.get_str('RANDOM', 'percentage_sample')

@@ -11,7 +11,7 @@ class TestConfigMethods(unittest.TestCase):
         self.assertIsNone(self.cfg.get_str('CAASDMA', '_camera_id'))
 
     def test_get_int(self):
-        self.assertEqual(self.cfg.get_int('CAMERA', '_camera_id'), 0)
+        self.assertEqual(self.cfg.get_int('CAMERA', 'camera_id'), 0)
         self.assertIsNone(self.cfg.get_int('CAMERA', 'cammesra'))  # warning
         self.assertIsNone(self.cfg.get_int('CAMERA',  'window_title'))  # warning
 
@@ -20,7 +20,7 @@ class TestConfigMethods(unittest.TestCase):
         self.assertIsNone(self.cfg.get_str('CAMERA', 'tittles')) # warning
 
     def test_get_float(self):
-        self.assertEqual(self.cfg.get_float('CAMERA', '_time_min_delta'), 2.8)
+        self.assertEqual(self.cfg.get_float('CAMERA', 'time_min_delta'), 2.8)
         self.assertIsNone(self.cfg.get_float('CAMERA', 'ttimmes'))  # warning
         self.assertIsNone(self.cfg.get_float('CAMERA', 'window_title'))  # warning
 
