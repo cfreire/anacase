@@ -1,4 +1,4 @@
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 import platform
 import datetime
@@ -19,12 +19,13 @@ class Leds:
     """ LED's manager, control _led_red and _led_green led """
 
     def __init__(self, led_param):
-        if MACHINE == RASPI:
+        if MACHINE in RASPI:
             self._led_green = LED(int(led_param['green_gpio']))
             self._led_red = LED(int(led_param['red_gpio']))
             _log.info('activate led module on platform {}'.format(MACHINE))
         else:
             _log.warning('no support for led on platform {}'.format(MACHINE))
+
         self._green_timeout = float(led_param['green_timeout'])
         self._red_timeout = float(led_param['red_timeout'])
         self._green_datetime = datetime.datetime.now()
