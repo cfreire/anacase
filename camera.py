@@ -1,4 +1,4 @@
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 from time import sleep
 import numpy as np
@@ -123,7 +123,7 @@ class Camera:
             if self._beam_position - self._beam_dead_zone <= cx <= self._beam_position + self._beam_dead_zone and \
                     (self._start_time + self._time_min_delta) < datetime.datetime.now():
                 self._counter += 1
-                _log.debug(f"counter {self._counter:000} ")
+                _log.debug("counter {} ".format(self._counter))
                 self._led_manager.activate_green()
                 self._start_time = datetime.datetime.now()
             # reset _counter
