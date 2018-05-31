@@ -1,4 +1,4 @@
-__version__ = "1.0.1"
+__version__ = '1.0.2'
 
 import platform
 import datetime
@@ -39,7 +39,7 @@ class Leds:
             self._red_datetime = datetime.datetime.now()
             if MACHINE in RASPI:
                 try:
-                    self.led_red.on()
+                    self._led_red.on()
                 except:
                     _log.warning('red led gpio fail on [{}]'.format(self._led_red))
         return self._red_active
@@ -51,7 +51,7 @@ class Leds:
             self._green_datetime = datetime.datetime.now()
             if MACHINE in RASPI:
                 try:
-                    self.led_green.on()
+                    self._led_green.on()
                 except:
                     _log.warning('green led gpio fail on [{}]'.format(self._led_green))
         return self._green_active
@@ -63,7 +63,7 @@ class Leds:
             self._green_active = False
             if MACHINE in RASPI:
                 try:
-                    self.led_green.off()
+                    self._led_green.off()
                 except:
                     _log.warning('green led off gpio fail on [{}]'.format(self._led_green))
         timeout_red = self._red_datetime + datetime.timedelta(seconds=self._red_timeout)
@@ -72,7 +72,7 @@ class Leds:
             self._red_active = False
             if MACHINE in RASPI:
                 try:
-                    self.led_red.off()
+                    self._led_red.off()
                 except:
                     _log.warning('red led off gpio fail on [{}]'.format(self._led_red))
         return [self._red_active, self._green_active]
