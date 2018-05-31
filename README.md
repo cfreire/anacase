@@ -34,6 +34,9 @@ Sistema com hardware e software opensource para amostragem de bagagens
     imutils==0.4.6
     opencv-python==3.4.0.12
     
+### Leds 
+    sudo pip install gpiozero
+    
 ## Usage
     $ cd anacase
     $ python3 anacase.py
@@ -44,7 +47,7 @@ TODO
 
 ## Built With
 
-* python 3.6
+* python 3.5
 
 ## Contributing
 
