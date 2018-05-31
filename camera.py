@@ -131,6 +131,12 @@ class Camera:
                 _log.debug('counter recycled at 1000')
                 self._counter = 0
 
+        # debug on X86
+        # TODO debugger console
+        if platform.machine() != 'armv7l':
+            cv2.imshow("Debug Delta", frame_delta)
+            cv2.imshow("Debug Threshold", thresh)
+
     def display_eng_mode(self):
         """ MODO ENG """
         cv2.line(self._frame, (self._beam_position, 50),
@@ -142,6 +148,7 @@ class Camera:
                     (self._width - 200, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)  # date at right
         cv2.rectangle(self._frame, (0, self._height), (self._width, self._height - 15),
                       self._gray_color, thickness=-1)
+
 
     def lower_menu(self):
         cv2.putText(self._frame, 'QUIT', (10, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
@@ -194,21 +201,17 @@ class Camera:
         self.lower_menu()
         cv2.imshow(self._window_name, self._frame)
         self._led_manager.clear_leds()
-        # debug on X86
-        # TODO debugger console
-        # if platform.machine() != 'armv7l':
-        #    cv2.imshow("Debug Delta", frame_delta)
-        #    cv2.imshow("Debug Threshold", thresh)
+
         return Camera.wait_keypress()
 
     def activate_buzzer(self):
         if platform.machine() == 'armv7':
             if not self._alarm:
                 _log.debug('buzzer activated')
-                IO.setmode(IO.BCM)  # we are programming the GPIO by BCM pin numbers. (PIN35 as ‘GPIO19’)
-                IO.setup(13, IO.OUT)  # initialize GPIO19 as an output.
-                self._buzzer = IO.PWM(13, 100)  # GPIO13 as PWM output, with 100Hz frequency
-                self._buzzer.start(50)  # generate PWM signal with 50% duty cycle
+                IO.setmode(IO.BCM)
+                IO.setup(13, IO.OUT)
+                self._buzzer = IO.PWM(13, 100)
+                self._buzzer.start(50)
 
     def stop_buzzer(self):
         if platform.machine() == 'armv7l' and self._buzzer is not None:
