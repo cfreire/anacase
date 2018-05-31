@@ -12,7 +12,7 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 
 import sys
 import argparse as ap
@@ -61,7 +61,7 @@ def setup_logger(log_file=_logfile_):
                         filemode='w',  # w = write / a = append
                         level=logging.INFO)
     mac = platform.machine()
-    logging.info(f"starting logger on {mac}")
+    logging.info("starting logger on {mac}".format(mac))
 
 
 def change_log_level(log_type):
