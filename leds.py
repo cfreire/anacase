@@ -22,9 +22,9 @@ class Leds:
         if MACHINE == RASPI:
             self._led_green = LED(int(led_param['green_gpio']))
             self._led_red = LED(int(led_param['red_gpio']))
-            _log.info(f'activate led module on platform {MACHINE}')
+            _log.info('activate led module on platform {}'.format(MACHINE))
         else:
-            _log.warning(f'no support for led on platform {MACHINE}')
+            _log.warning('no support for led on platform {}'.format(MACHINE))
         self._green_timeout = float(led_param['green_timeout'])
         self._red_timeout = float(led_param['red_timeout'])
         self._green_datetime = datetime.datetime.now()
@@ -41,7 +41,7 @@ class Leds:
                 try:
                     self._led_red.on()
                 except:
-                    _log.warning(f'red led gpio fail on [{self._led_red}]')
+                    _log.warning('red led gpio fail on [{}]'.format(self._led_red))
         return self._red_active
 
     def activate_green(self):
@@ -53,7 +53,7 @@ class Leds:
                 try:
                     self._led_green.on()
                 except:
-                    _log.warning(f'green led gpio fail on [{self._led_green}]')
+                    _log.warning('green led gpio fail on [{}]'.format(self._led_green))
         return self._green_active
 
     def clear_leds(self):
@@ -65,7 +65,7 @@ class Leds:
                 try:
                     self._led_green.off()
                 except:
-                    _log.warning(f'green led off gpio fail on [{self._led_green}]')
+                    _log.warning('green led off gpio fail on [{}]'.format(self._led_green))
         timeout_red = self._red_datetime + datetime.timedelta(seconds=self._red_timeout)
         if self._red_active and (timeout_red < datetime.datetime.now()):
             _log.debug('red led off')
@@ -74,7 +74,7 @@ class Leds:
                 try:
                     self._led_red.off()
                 except:
-                    _log.warning(f'red led off gpio fail on [{self._led_red}]')
+                    _log.warning('red led off gpio fail on [{}]'.format(self._led_red))
         return [self._red_active, self._green_active]
 
 

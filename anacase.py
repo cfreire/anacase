@@ -12,7 +12,7 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
 import sys
 import argparse as ap
@@ -66,10 +66,10 @@ def setup_logger(log_file=_logfile_):
 
 def change_log_level(log_type):
     try:
-        logging.info(f'changing _log level to {log_type}')
+        logging.info('changing _log level to {}'.format(log_type))
         logging.getLogger().setLevel(log_type)
     except ValueError:
-        logging.warning(f'cannot change _log level to {log_type}')
+        logging.warning('cannot change _log level to {}'.format(log_type))
 
 
 def get_random_samples(random_param):
@@ -77,19 +77,19 @@ def get_random_samples(random_param):
     case_random = []
     percentage_sample = int(random_param['percentage_sample'])
     loop_sample = int(random_param['loop_sample'])
-    logging.info(f'starting generate random {percentage_sample}% of {loop_sample}...')
+    logging.info('starting generate random {}% of {}...'.format(percentage_sample, loop_sample ))
     try:
         case_random.append(1)
         for c in range(loop_sample // percentage_sample):
             luck = random.randrange(loop_sample) + 1
             case_random.append(luck)
         case_random.sort()
-        logging.debug(f'random numbers {case_random}')
+        logging.debug('random numbers {}'.format(case_random))
         return case_random
     except TypeError:
-        logging.error(f'error generating random numbers {percentage_sample} of {loop_sample}')
+        logging.error('error generating random numbers {} of {}'.format(percentage_sample, loop_sample))
         case_random.append(1)  # generate only one random
-        logging.info(f'only one sample created [1]')
+        logging.info('only one sample created [1]')
         return case_random
 
 

@@ -44,22 +44,24 @@ class Camera:
             self._bag_select = float(camera_data['bag_select'])
             self._case_review = random_data
             self._led_manager = leds.Leds(led_data)
-            _log.info(f'starting v4l on camera id "{self._camera_id}"')
+            _log.info('starting v4l on camera id "{}"'.format(self._camera_id))
         except ValueError as ex:
-            msg = f'error reading camera_data {ex}. Aborting!'
+            msg = 'error reading camera_data {}. Aborting!'.format(ex)
             _log.error(msg)
             sys.exit(msg)
 
         try:
             self._cam = cv2.VideoCapture(self._camera_id)
+            self._cam.set(3, 640) # FIXME parameters
+            self._cam.set(4, 480) # FIXME parameters
             sleep(self._camera_delay)
             (grabbed, self._frame) = self._cam.read()
             if not grabbed:  # error in camera
-                msg = f'error reading _frame on camera id "{self._camera_id}. Aborting!"'
+                msg = 'error reading _frame on camera id "{}. Aborting!"'.format(self._camera_id)
                 _log.critical(msg)
                 sys.exit(msg)
         except AttributeError as ex:
-            msg = f'critical setup camera id {self._camera_id} - {ex}. Aborting!'
+            msg = 'critical setup camera id {} - {}. Aborting!'.format(self._camera_id, ex)
             _log.critical(msg)
             sys.exit(msg)
 
@@ -86,6 +88,7 @@ class Camera:
             sys.exit('abnormal program termination!')
         # resize camera _frame
         self._frame = imutils.resize(self._frame, self._width, self._height)
+        self._frame = self._frame[1:self._height, 1:self._width]
         # gray conversion
         self.gray_frame = cv2.cvtColor(self._frame, cv2.COLOR_BGR2GRAY)
         # blur conversion
@@ -125,7 +128,7 @@ class Camera:
                 self._start_time = datetime.datetime.now()
             # reset _counter
             if self._counter == 1000:
-                _log.debug(f'counter recycled at 1000')
+                _log.debug('counter recycled at 1000')
                 self._counter = 0
 
     def display_eng_mode(self):

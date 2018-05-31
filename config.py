@@ -12,11 +12,11 @@ class Config:
     def __init__(self, config_file_name):
         self.config = configparser.RawConfigParser()
         if not self.config.read(config_file_name):
-            msg = f'invalid configuration file "{config_file_name}". Aborting!'
+            msg = 'invalid configuration file "{}". Aborting!'.format(config_file_name)
             self._log.critical(msg)
             sys.exit(msg)
         else:
-            self._log.info(f'success reading config file "{config_file_name}"')
+            self._log.info('success reading config file "{}"'.format(config_file_name))
 
     def get_str(self, section, key):
         try:
@@ -49,11 +49,11 @@ class Config:
 
     @staticmethod
     def _logger_warning(section, key):
-        Config._log.warning(f'invalid key "{key}" in section [{section}]')
+        Config._log.warning('invalid key "{}" in section [{}]'.format(key, section))
 
     @staticmethod
     def _logger_debug(func, section, key, data=''):
-        Config._log.debug(f'call function {func}() key "{key}" in section [{section}] {data}')
+        Config._log.debug('call function {}() key "{}" in section [{}] {}'.format(func, key, section, data))
 
 
 if __name__ == "__main__":
