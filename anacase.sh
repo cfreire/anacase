@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # anacase run script
-# 20180603 Cesar Freire
+# 20180604 Cesar Freire
 
 DIRECTORY='anacase'
 REPO='https://github.com/cfreire/anacase.git'
