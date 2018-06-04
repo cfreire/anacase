@@ -33,7 +33,7 @@ class Buzzer:
                 pass
 
     def stop_buzzer(self):
-        if self._buzzer is not None:
+        if self._alarm:
             log.debug('buzzer stopped')
         if MACHINE in RASPI:
             self._buzzer.stop()
