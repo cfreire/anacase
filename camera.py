@@ -20,9 +20,10 @@ class Camera:
     _cam = None
     contours = None
 
-    def __init__(self, camera_data, led_data, random_data, buzzer_data):
+    def __init__(self, camera_data, led_data, random_data, buzzer_data, version):
         # get vars
         try:
+            self._software_version = version
             self._alarm = False
             self._counter = 0
             self._freeze_frame = None
@@ -126,7 +127,7 @@ class Camera:
                 self._led_manager.activate_green()
                 self._start_time = datetime.datetime.now()
             # reset _counter
-            if self._counter >= 1000:
+            if self._counter >= 1000: # FIXME parameter loop
                 _log.debug('counter recycled at 1000')
                 self._counter = 0
 
@@ -159,18 +160,23 @@ class Camera:
                     0.5, self._white_color, 1)
         cv2.putText(self._frame, 'ENG', (10+80*4, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, self._white_color, 1)
+        cv2.putText(self._frame,  self._software_version, (10 + 80 * 9, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, self._white_color, 1)
+
         for i in range(10):
             cv2.line(self._frame, (i * 80, self._height), (i * 80, self._height - 15), self._white_color, 1)
 
     def display_operating_mode(self):
         """  MODO OPERATION """
+        msg = "counter: {:03d} | selected: {:03d} | percentage: {:4.1f}%".format(self._counter, 101 - len(self._case_review),
+                                                  (101 - len(self._case_review)) / (self._counter+1) * 100)  # FIXME parameters
         if self._alarm:
-            cv2.putText(self._freeze_frame, "Counter: {:03d}".format(self._counter),
-                        (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)  # counter
+            cv2.putText(self._freeze_frame, msg, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)
             cv2.rectangle(self._freeze_frame, (0, 35), (self._width, self._height - 30), self._red_color, 20)
             self._frame = self._freeze_frame
         else:
             self._frame = np.zeros((self._height, self._width, 3), np.uint8)
+            cv2.putText(self._frame, msg, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)
             cv2.putText(self._frame, "{:03d}".format(self._counter), (self._height // 2, self._width // 2 - 100),
                         cv2.FONT_HERSHEY_DUPLEX, 5, self._white_color, 1)
         cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"),

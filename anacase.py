@@ -12,7 +12,7 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.1.4'
+__version__ = '1.1.14'
 
 import sys
 import argparse as ap
@@ -99,11 +99,11 @@ def main():
     setup_logger(master_config['log_file'])
     cfg = config.Config(master_config['config_file'])
     change_log_level(cfg.get_str('GLOBAL', 'log_level'))
-    random_data = get_random_samples(cfg.get('RANDOM'))
+    random_data = get_random_samples(cfg.get('STATS'))
     led_data = cfg.get('LED')
     camera_data = cfg.get('CAMERA')
     buzzer_data = cfg.get('BUZZER')
-    cam = camera.Camera(camera_data, led_data, random_data, buzzer_data)
+    cam = camera.Camera(camera_data, led_data, random_data, buzzer_data, __version__)
     while cam.run():
         pass
     cam.close()
