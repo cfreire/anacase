@@ -27,6 +27,7 @@ class Buzzer:
     def activate_buzzer(self):
         if not self._alarm:
             log.debug('buzzer activated')
+            self._alarm = True
             if MACHINE in RASPI:
                 self._buzzer.start(50)
             else:
@@ -35,10 +36,15 @@ class Buzzer:
     def stop_buzzer(self):
         if self._alarm:
             log.debug('buzzer stopped')
+            self._alarm = None
         if MACHINE in RASPI:
             self._buzzer.stop()
         else:
             pass
+
+    def __del__(self):
+        if MACHINE in RASPI:
+            Io.cleanup()
 
 
 if __name__ == "__main__":
