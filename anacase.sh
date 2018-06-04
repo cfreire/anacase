@@ -12,7 +12,7 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 	cd $DIRECTORY
 	echo 'sync github version'
-	git fetch
+	git pull
 	echo 'startting anacase...'
 	./anacase.py
 
