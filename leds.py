@@ -1,5 +1,3 @@
-__version__ = '1.0.3'
-
 import platform
 import datetime
 import logging

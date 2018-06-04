@@ -1,5 +1,3 @@
-__version__ = "1.0.7"
-
 import logging
 import datetime
 from platform import machine
@@ -16,7 +14,7 @@ if machine() in RASPI:
 class Buzzer:
 
     def __init__(self, buzzer_param):
-        self._alarm = False
+        self._alarm = None
         self.timeout = float(buzzer_param['timeout'])
         self.buzzer_datetime = datetime.datetime.now()
         log.info('activate buzzer module on platform {}'.format(machine()))
@@ -40,7 +38,7 @@ class Buzzer:
         timeout = self.buzzer_datetime + datetime.timedelta(seconds=self.timeout)
         if self._alarm and (timeout < datetime.datetime.now()):
             log.debug('buzzer stopped')
-            self._alarm = None
+            self._alarm = False
         if machine() in RASPI:
             self._buzzer.stop()
         else:

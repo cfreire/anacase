@@ -43,10 +43,9 @@ Sistema com hardware e software opensource para amostragem de bagagens
     sudo apt install python3-rpi.gpio
     
 ## Usage
-    $ cd ~/anacase
-    $ cp anacase.sh ~
-    $ cd ~
-    $ ./anacase.sh
+    git clone https://github.com/cfreire/anacase.git
+    cd anacase
+    ./anacase.sh
 
 ## Running the tests
 

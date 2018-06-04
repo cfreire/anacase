@@ -1,5 +1,3 @@
-__version__ = "1.0.0"
-
 import sys
 import configparser
 import logging
@@ -42,7 +40,7 @@ class Config:
     def get(self, section):
         try:
             data = dict(self.config.items(section))
-            Config._logger_debug('get', section, '*', data)
+            Config._logger_debug('get', section, 'ALL', data)
             return data
         except (configparser.Error, ValueError):
             Config._logger_warning(section, '[*]')
