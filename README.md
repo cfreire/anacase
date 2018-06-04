@@ -30,16 +30,23 @@ Sistema com hardware e software opensource para amostragem de bagagens
     $ sudo apt-get install libqt4-dev
     $ sudo pip3 install python-opencv
     $ sudo pip3 install imutils
+
+#### verify libs
     $ sudo pip3 freeze -l
     imutils==0.4.6
     opencv-python==3.4.0.12
     
 ### Leds 
     sudo pip install gpiozero
+
+### Buzzer 
+    sudo apt install python3-rpi.gpio
     
 ## Usage
-    $ cd anacase
-    $ python3 anacase.py
+    $ cd ~/anacase
+    $ cp anacase.sh ~
+    $ cd ~
+    $ ./anacase.sh
 
 ## Running the tests
 

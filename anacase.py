@@ -102,7 +102,8 @@ def main():
     random_data = get_random_samples(cfg.get('RANDOM'))
     led_data = cfg.get('LED')
     camera_data = cfg.get('CAMERA')
-    cam = camera.Camera(camera_data, led_data, random_data)
+    buzzer_data = cfg.get('BUZZER')
+    cam = camera.Camera(camera_data, led_data, random_data, buzzer_data)
     while cam.run():
         pass
     cam.close()

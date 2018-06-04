@@ -7,9 +7,9 @@ import datetime
 import cv2
 import logging
 import sys
-import platform
 
 import leds
+import buzzer
 
 _log = logging.getLogger(__name__)
 
@@ -22,12 +22,11 @@ class Camera:
     _cam = None
     contours = None
 
-    def __init__(self, camera_data, led_data, random_data):
+    def __init__(self, camera_data, led_data, random_data, buzzer_data):
         # get vars
         try:
-            self._counter = 0
             self._alarm = False
-            self._buzzer = None
+            self._counter = 0
             self._freeze_frame = None
             self._camera_id = int(camera_data['camera_id'])
             self._start_time = datetime.datetime.now()
@@ -44,6 +43,7 @@ class Camera:
             self._bag_select = float(camera_data['bag_select'])
             self._case_review = random_data
             self._led_manager = leds.Leds(led_data)
+            self._buzzer = buzzer.Buzzer(buzzer_data)
             _log.info('starting v4l on camera id "{}"'.format(self._camera_id))
         except ValueError as ex:
             msg = 'error reading camera_data {}. Aborting!'.format(ex)
@@ -52,8 +52,8 @@ class Camera:
 
         try:
             self._cam = cv2.VideoCapture(self._camera_id)
-            self._cam.set(3, 640) # FIXME parameters
-            self._cam.set(4, 480) # FIXME parameters
+            self._cam.set(3, 640)  # FIXME parameters
+            self._cam.set(4, 480)  # FIXME parameters
             sleep(self._camera_delay)
             (grabbed, self._frame) = self._cam.read()
             if not grabbed:  # error in camera
@@ -133,9 +133,9 @@ class Camera:
 
         # debug on X86
         # TODO debugger console
-        if platform.machine() != 'armv7l':
-            cv2.imshow("Debug Delta", frame_delta)
-            cv2.imshow("Debug Threshold", thresh)
+        # if platform.machine() != 'armv7l':
+        #    cv2.imshow("Debug Delta", frame_delta)
+        #    cv2.imshow("Debug Threshold", thresh)
 
     def display_eng_mode(self):
         """ MODO ENG """
@@ -148,7 +148,6 @@ class Camera:
                     (self._width - 200, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)  # date at right
         cv2.rectangle(self._frame, (0, self._height), (self._width, self._height - 15),
                       self._gray_color, thickness=-1)
-
 
     def lower_menu(self):
         cv2.putText(self._frame, 'QUIT', (10, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
@@ -184,12 +183,7 @@ class Camera:
             self._alarm = True
             self._freeze_frame = self._frame
             self._led_manager.activate_red()
-            self.activate_buzzer()
-        # alarm reset
-        timeout = self._start_time + datetime.timedelta(seconds=self._bag_select)
-        if self._alarm and (timeout < datetime.datetime.now()):
-            self._alarm = False
-            self.stop_buzzer()
+            self._buzzer.activate_buzzer()
 
     def run(self):
         self.compute_img()
@@ -201,22 +195,9 @@ class Camera:
         self.lower_menu()
         cv2.imshow(self._window_name, self._frame)
         self._led_manager.clear_leds()
+        self._buzzer.stop_buzzer()
 
         return Camera.wait_keypress()
-
-    def activate_buzzer(self):
-        if platform.machine() == 'armv7':
-            if not self._alarm:
-                _log.debug('buzzer activated')
-                IO.setmode(IO.BCM)
-                IO.setup(13, IO.OUT)
-                self._buzzer = IO.PWM(13, 100)
-                self._buzzer.start(50)
-
-    def stop_buzzer(self):
-        if platform.machine() == 'armv7l' and self._buzzer is not None:
-            self._buzzer.stop()
-            _log.debug('buzzer stopped')
 
     @staticmethod
     def wait_keypress():

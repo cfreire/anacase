@@ -1,49 +1,53 @@
 __version__ = "1.0.7"
 
-import platform
 import logging
+import datetime
+from platform import machine
 from time import sleep
 
 log = logging.getLogger(__name__)
 
-MACHINE = platform.machine()
 RASPI = ["armv7l"]
 
-if MACHINE in RASPI:
+if machine() in RASPI:
     import RPi.GPIO as Io
 
 
 class Buzzer:
 
-    def __init__(self):
+    def __init__(self, buzzer_param):
         self._alarm = False
-        if MACHINE in RASPI:
-            if not self._alarm:
-                log.debug('setup buzzer')
+        self.timeout = float(buzzer_param['timeout'])
+        self.buzzer_datetime = datetime.datetime.now()
+        log.info('activate buzzer module on platform {}'.format(machine()))
+        if machine() in RASPI:
                 Io.setmode(Io.BCM)
                 Io.setup(13, Io.OUT)
                 self._buzzer = Io.PWM(13, 100)
+        else:
+            log.warning('no support for buzzer on platform {}'.format(machine()))
 
     def activate_buzzer(self):
         if not self._alarm:
             log.debug('buzzer activated')
             self._alarm = True
-            if MACHINE in RASPI:
+            if machine() in RASPI:
                 self._buzzer.start(50)
             else:
                 pass
 
     def stop_buzzer(self):
-        if self._alarm:
+        timeout = self.buzzer_datetime + datetime.timedelta(seconds=self.timeout)
+        if self._alarm and (timeout < datetime.datetime.now()):
             log.debug('buzzer stopped')
             self._alarm = None
-        if MACHINE in RASPI:
+        if machine() in RASPI:
             self._buzzer.stop()
         else:
             pass
 
     def __del__(self):
-        if MACHINE in RASPI:
+        if machine() in RASPI:
             Io.cleanup()
 
 
@@ -51,7 +55,12 @@ if __name__ == "__main__":
     # simple explore test
     logging.basicConfig()
     logging.getLogger().setLevel(logging.DEBUG)
-    b = Buzzer()
+    buzzer_data = {'timeout': '2.0'}
+    b = Buzzer(buzzer_data)
     b.activate_buzzer()
     sleep(1)
+    log.debug('try to deactivate')
     b.stop_buzzer()
+    sleep(1)
+    b.stop_buzzer()
+
