@@ -6,6 +6,7 @@ from time import sleep
 log = logging.getLogger(__name__)
 
 RASPI = ["armv7l"]
+BUZZER_PIN = 13
 
 if machine() in RASPI:
     import RPi.GPIO as Io
@@ -20,8 +21,8 @@ class Buzzer:
         if machine() in RASPI:
             log.info('activate buzzer module on platform {}'.format(machine()))
             Io.setmode(Io.BCM)
-            Io.setup(13, Io.OUT)
-            self._buzzer = Io.PWM(13, 100)
+            Io.setup(BUZZER_PIN, Io.OUT)
+            self._buzzer = None
         else:
             log.warning('no support for buzzer on platform {}'.format(machine()))
 
@@ -30,6 +31,7 @@ class Buzzer:
             log.debug('buzzer activated')
             self._alarm = True
             if machine() in RASPI:
+                self._buzzer = Io.PWM(BUZZER_PIN, 100)
                 self._buzzer.start(50)
             else:
                 pass
@@ -56,7 +58,7 @@ if __name__ == "__main__":
     buzzer_data = {'timeout': '2.0'}
     b = Buzzer(buzzer_data)
     b.activate_buzzer()
-    for n in range(1, 2000):
+    for n in range(1, 2000):  # 2s test
         sleep(0.001)
         b.stop_buzzer()
 
