@@ -10,7 +10,7 @@ MACHINE = platform.machine()
 RASPI = ["armv7l"]
 
 if MACHINE in RASPI:
-    from gpiozero import GPIODevice as Io
+    import RPi.GPIO as Io
 
 
 class Buzzer:
@@ -26,16 +26,19 @@ class Buzzer:
 
     def activate_buzzer(self):
         if not self._alarm:
+            log.debug('buzzer activated')
             if MACHINE in RASPI:
-                log.debug('buzzer activated')
                 self._buzzer.start(50)
             else:
-                print('\a')
+                pass
 
     def stop_buzzer(self):
-        if MACHINE in RASPI and self._buzzer is not None:
+        if self._buzzer is not None:
             log.debug('buzzer stopped')
+        if MACHINE in RASPI:
             self._buzzer.stop()
+        else:
+            pass
 
 
 if __name__ == "__main__":
