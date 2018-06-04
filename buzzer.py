@@ -22,7 +22,7 @@ class Buzzer:
             log.info('activate buzzer module on platform {}'.format(machine()))
             Io.setmode(Io.BCM)
             Io.setup(BUZZER_PIN, Io.OUT)
-            self._buzzer = None
+            self._buzzer = Io.PWM(BUZZER_PIN, 100)
         else:
             log.warning('no support for buzzer on platform {}'.format(machine()))
 
@@ -30,8 +30,8 @@ class Buzzer:
         if not self._alarm:
             log.debug('buzzer activated')
             self._alarm = True
+            self.buzzer_datetime = datetime.datetime.now()
             if machine() in RASPI:
-                self._buzzer = Io.PWM(BUZZER_PIN, 100)
                 self._buzzer.start(50)
             else:
                 pass
