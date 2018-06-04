@@ -171,9 +171,9 @@ class Camera:
         if self._counter == 0:
             percent = 0
         else:
-            percent = 100 - len(self._case_review)
+            percent = 51 - len(self._case_review)
         msg = "counter: {:03d} | selected: {:03d} | percentage: {:4.1f}%".format(self._counter, percent,
-                            (101 - len(self._case_review)) / (self._counter+1) * 100) # FIXME parameters
+                            (51 - len(self._case_review)) / (self._counter+1) * 100) # FIXME parameters
         if self._alarm:
             cv2.putText(self._freeze_frame, msg, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)
             cv2.rectangle(self._freeze_frame, (0, 35), (self._width, self._height - 30), self._red_color, 20)
