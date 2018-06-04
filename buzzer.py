@@ -41,10 +41,10 @@ class Buzzer:
         if self._alarm and (timeout < datetime.datetime.now()):
             log.debug('buzzer stopped')
             self._alarm = False
-        if machine() in RASPI:
-            self._buzzer.stop()
-        else:
-            pass
+            if machine() in RASPI:
+                self._buzzer.stop()
+            else:
+                pass
 
     def __del__(self):
         if machine() in RASPI:
