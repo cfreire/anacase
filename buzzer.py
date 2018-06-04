@@ -56,7 +56,7 @@ if __name__ == "__main__":
     buzzer_data = {'timeout': '2.0'}
     b = Buzzer(buzzer_data)
     b.activate_buzzer()
-    for n in range(1, 1000):
+    for n in range(1, 2000):
         sleep(0.001)
         b.stop_buzzer()
 
