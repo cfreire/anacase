@@ -168,7 +168,11 @@ class Camera:
 
     def display_operating_mode(self):
         """  MODO OPERATION """
-        msg = "counter: {:03d} | selected: {:03d} | percentage: {:4.1f}%".format(self._counter, 101 - len(self._case_review),
+        if self._counter == 0:
+            percent = '0.00'
+        else:
+            percent = 100 - len(self._case_review)
+        msg = "counter: {:03d} | selected: {:03d} | percentage: {:4.1f}%".format(self._counter, percent,
                                                   (101 - len(self._case_review)) / (self._counter+1) * 100)  # FIXME parameters
         if self._alarm:
             cv2.putText(self._freeze_frame, msg, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)
