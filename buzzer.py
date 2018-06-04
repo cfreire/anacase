@@ -17,11 +17,11 @@ class Buzzer:
         self._alarm = None
         self.timeout = float(buzzer_param['timeout'])
         self.buzzer_datetime = datetime.datetime.now()
-        log.info('activate buzzer module on platform {}'.format(machine()))
         if machine() in RASPI:
-                Io.setmode(Io.BCM)
-                Io.setup(13, Io.OUT)
-                self._buzzer = Io.PWM(13, 100)
+            log.info('activate buzzer module on platform {}'.format(machine()))
+            Io.setmode(Io.BCM)
+            Io.setup(13, Io.OUT)
+            self._buzzer = Io.PWM(13, 100)
         else:
             log.warning('no support for buzzer on platform {}'.format(machine()))
 

@@ -66,10 +66,10 @@ def setup_logger(log_file=_logfile_):
 
 def change_log_level(log_type):
     try:
-        logging.info('changing _log level to {}'.format(log_type))
+        logging.info('changing log level to {}'.format(log_type))
         logging.getLogger().setLevel(log_type)
     except ValueError:
-        logging.warning('cannot change _log level to {}'.format(log_type))
+        logging.warning('cannot change log level to {}'.format(log_type))
 
 
 def get_random_samples(random_param):

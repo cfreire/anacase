@@ -39,6 +39,7 @@ class Camera:
             self._threshold_value = int(camera_data['threshold_value'])
             self._camera_delay = int(camera_data['camera_delay'])
             self._bag_select = float(camera_data['bag_select'])
+            self._bag_datetime = datetime.datetime.now()
             self._case_review = random_data
             self._led_manager = leds.Leds(led_data)
             self._buzzer = buzzer.Buzzer(buzzer_data)
@@ -70,7 +71,7 @@ class Camera:
         self._blue_color = (255, 0, 0)
         self._gray_color = (98, 98, 98)
         self._beacon_color = (0, 255, 0)
-        self._operating = False
+        self._operating = True
         # set display size
         cv2.namedWindow(self._window_name, cv2.WND_PROP_AUTOSIZE)
         cv2.setWindowProperty(self._window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
@@ -125,7 +126,7 @@ class Camera:
                 self._led_manager.activate_green()
                 self._start_time = datetime.datetime.now()
             # reset _counter
-            if self._counter == 1000:
+            if self._counter >= 1000:
                 _log.debug('counter recycled at 1000')
                 self._counter = 0
 
@@ -142,8 +143,8 @@ class Camera:
         cv2.rectangle(self._frame, (0, 0), (self._width, 30), self._gray_color, thickness=-1)  # upper gray
         cv2.putText(self._frame, "Counter: {:03d}".format(self._counter),
                     (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)  # counter
-        cv2.putText(self._frame, datetime.datetime.now().strftime("%B %Y %H:%M:%S"),
-                    (self._width - 200, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)  # date at right
+        cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"),
+                    (self._width - 100, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)  # date at right
         cv2.rectangle(self._frame, (0, self._height), (self._width, self._height - 15),
                       self._gray_color, thickness=-1)
 
@@ -172,13 +173,21 @@ class Camera:
             self._frame = np.zeros((self._height, self._width, 3), np.uint8)
             cv2.putText(self._frame, "{:03d}".format(self._counter), (self._height // 2, self._width // 2 - 100),
                         cv2.FONT_HERSHEY_DUPLEX, 5, self._white_color, 1)
-        cv2.putText(self._frame, datetime.datetime.now().strftime("%B %Y %H:%M:%S"),
-                    (self._width - 200, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)
+        cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"),
+                    (self._width - 100, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self._white_color, 1)
+        # clear image after timeout
+        timeout = self._bag_datetime + datetime.timedelta(seconds=self._bag_select)
+        if self._alarm and (timeout < datetime.datetime.now()):
+            _log.debug('reset review alarm at {}'.format(datetime.datetime.now()))
+            self._alarm = None
 
     def case_for_review(self):
         """ Detect if case is for review"""
         if self._counter in self._case_review and not self._alarm:
             self._alarm = True
+            self._case_review.remove(self._counter)  # remove case from list
+            _log.info('case {} select for review at {}'.format(self._counter, datetime.datetime.now()))
+            self._bag_datetime = datetime.datetime.now()
             self._freeze_frame = self._frame
             self._led_manager.activate_red()
             self._buzzer.activate_buzzer()
@@ -194,7 +203,6 @@ class Camera:
         cv2.imshow(self._window_name, self._frame)
         self._led_manager.clear_leds()
         self._buzzer.stop_buzzer()
-
         return Camera.wait_keypress()
 
     @staticmethod
