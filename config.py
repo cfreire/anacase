@@ -1,62 +1,48 @@
-import sys
+__version__ = '1.0.1'
+
 import configparser
 import logging
 
 
 class Config:
-    """ Read configuration files"""
-    _log = logging.getLogger(__name__)
+    """Read configuration files"""
+
+    log = logging.getLogger(__name__)
 
     def __init__(self, config_file_name):
         self.config = configparser.RawConfigParser()
+        self.data = dict()
         if not self.config.read(config_file_name):
-            msg = 'invalid configuration file "{}". Aborting!'.format(config_file_name)
-            self._log.critical(msg)
-            sys.exit(msg)
+            msg = 'invalid configuration file "{}"'.format(config_file_name)
+            self.log.critical(msg)
+            raise ValueError(msg)
         else:
-            self._log.info('success reading config file "{}"'.format(config_file_name))
+            self.log.info('success reading config file "{}"'.format(config_file_name))
 
-    def get_str(self, section, key):
+    def section(self, section):
         try:
-            Config._logger_debug('get_str', section, key)
-            return self.config.get(section, key)
-        except (configparser.Error, ValueError):
-            Config._logger_warning(section, key)
+            self.data = dict(self.config.items(section))
+            self.log.debug('reading [{}] with data: {}'.format(section, self.data))
+            return self.data
+        except configparser.NoSectionError as ex:
+            self.log.warning('section [{}] not found'.format(section))
+            return None
 
-    def get_int(self, section, key):
+    def key(self, key):
         try:
-            Config._logger_debug('get_int', section, key)
-            return self.config.getint(section, key)
-        except (configparser.Error, ValueError):
-            Config._logger_warning(section, key)
-
-    def get_float(self, section, key):
-        try:
-            Config._logger_debug('get_float', section, key)
-            return self.config.getfloat(section, key)
-        except (configparser.Error, ValueError):
-            Config._logger_warning(section, key)
-
-    def get(self, section):
-        try:
-            data = dict(self.config.items(section))
-            Config._logger_debug('get', section, 'ALL', data)
-            return data
-        except (configparser.Error, ValueError):
-            Config._logger_warning(section, '[*]')
-
-    @staticmethod
-    def _logger_warning(section, key):
-        Config._log.warning('invalid key "{}" in section [{}]'.format(key, section))
-
-    @staticmethod
-    def _logger_debug(func, section, key, data=''):
-        Config._log.debug('call function {}() key "{}" in section [{}] {}'.format(func, key, section, data))
+            self.log.debug('reading "{}" with data: {}'.format(key, self.data))
+            return self.data[key]
+        except KeyError:
+            self.log.warning('key "{}" not found'.format(key))
+            return None
 
 
 if __name__ == "__main__":
-    # simple explore test
     logging.basicConfig()
     logging.getLogger().setLevel(logging.DEBUG)
-    cfg = Config('anacase.ini')
-    cfg.get_str('RANDOM', 'percentage_sample')
+    cfg = Config('tests/config.ini')
+    cfg.section('GLOBAL')
+    cfg.key('log_level')
+
+
+

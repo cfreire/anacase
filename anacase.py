@@ -12,16 +12,16 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.1.20'
+__version__ = '1.1.21'
 
 import sys
 import argparse as ap
 import random
-import platform
 import logging
 
 import config
 import camera
+import logger
 
 # import camera
 
@@ -54,24 +54,6 @@ def get_start_arguments():
     return defaults
 
 
-def setup_logger(log_file=_logfile_):
-    """ logger format, setup and start mode (write,append) """
-    logging.basicConfig(filename=log_file,
-                        format='%(asctime)s %(name)s\t%(levelname)s\t %(message)s',
-                        filemode='w',  # w = write / a = append
-                        level=logging.INFO)
-    mac = platform.machine()
-    logging.info("starting logger on {}".format(mac))
-
-
-def change_log_level(log_type):
-    try:
-        logging.info('changing log level to {}'.format(log_type))
-        logging.getLogger().setLevel(log_type)
-    except ValueError:
-        logging.warning('cannot change log level to {}'.format(log_type))
-
-
 def get_random_samples(random_param):
     """ generate random case samples """
     case_random = []
@@ -96,14 +78,15 @@ def get_random_samples(random_param):
 def main():
     """ MAIN APP """
     master_config = get_start_arguments()
-    setup_logger(master_config['log_file'])
+    logger.setup(master_config['log_file'], __version__)
     cfg = config.Config(master_config['config_file'])
-    change_log_level(cfg.get_str('GLOBAL', 'log_level'))
-    random_data = get_random_samples(cfg.get('STATS'))
-    led_data = cfg.get('LED')
-    camera_data = cfg.get('CAMERA')
-    buzzer_data = cfg.get('BUZZER')
-    cam = camera.Camera(camera_data, led_data, random_data, buzzer_data, __version__)
+    cfg.section('GLOBAL')
+    logger.level(cfg.key('log_level'))
+    cam = camera.Camera(camera_data=cfg.section('CAMERA'),
+                        led_data=cfg.section('LED'),
+                        random_data=get_random_samples(cfg.section('STATS')),
+                        buzzer_data=cfg.section('BUZZER'),
+                        version=__version__)
     while cam.run():
         pass
     cam.close()
