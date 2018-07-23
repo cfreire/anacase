@@ -77,7 +77,7 @@ def get_random_samples(random_param):
     case_random = []
     percentage_sample = int(random_param['percentage_sample'])
     loop_sample = int(random_param['loop_sample'])
-    logging.info('starting generate random {}% of {}...'.format(percentage_sample, loop_sample ))
+    logging.info('starting generate random {}% of {}...'.format(percentage_sample, loop_sample))
     try:
         case_random.append(1)
         for c in range(loop_sample // percentage_sample):
@@ -111,4 +111,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

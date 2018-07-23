@@ -134,8 +134,8 @@ class Camera:
         # debug on X86
         # TODO debugger console
         # if platform.machine() != 'armv7l':
-        #    cv2.imshow("Debug Delta", frame_delta)
-        #    cv2.imshow("Debug Threshold", thresh)
+            cv2.imshow("Debug Delta", frame_delta)
+            cv2.imshow("Debug Threshold", thresh)
 
     def display_eng_mode(self):
         """ MODO ENG """
