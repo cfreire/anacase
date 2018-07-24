@@ -14,6 +14,8 @@ Sistema com hardware e software opensource para amostragem de bagagens
 ### Implementação USB Stick
     Format USB STICK em FAT
     $ sudo dd if=2018-03-13-raspbian-stretch.img of=/dev/mmcblk0 bs=4M
+    
+### Removing unwanted apps in raspi
     $ sudo apt update
     $ sudo apt remove libreoffice*
     $ sudo apt purge wolfram*
@@ -24,7 +26,7 @@ Sistema com hardware e software opensource para amostragem de bagagens
     $ sudo apt-get install -y libts-bin evtest xinput python-dev python-pip7
     $ sudo apt install vim
 
-### python libs
+### python require libs for opencv
     $ sudo apt-get install libatlas-base-dev gfortran
     $ sudo apt-get install libjpeg8-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
     $ sudo apt-get install libqt4-dev
@@ -36,14 +38,16 @@ Sistema com hardware e software opensource para amostragem de bagagens
     imutils==0.4.6
     opencv-python==3.4.0.12
     
+### obtain anacase from github
+    git clone https://github.com/cfreire/anacase.git
+
 ### Leds 
     sudo pip install gpiozero
 
 ### Buzzer 
     sudo apt install python3-rpi.gpio
     
-## Usage
-    git clone https://github.com/cfreire/anacase.git
+## Usage   
     cd anacase
     ./anacase.sh
 
