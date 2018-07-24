@@ -22,10 +22,15 @@ Airport bag sampler using  hardware and software opensource
     $ sudo apt upgrade
 
 ### touch xpt2046
-    $ wget https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)#Driver
-    $ sudo apt-get install -y libts-bin evtest xinput python-dev python-pip7
+    $ wget https://www.waveshare.com/w/upload/3/34/LCD-show-180331.tar.gz
+    $ tar -xzvf LCD-show-180331.tar.gz
+    $ cd /LCD-show
+    $ ./LCD35-show
+    $ sudo apt-get install -y libts-bin evtest xinput python-dev python3-pip
+    
+### tools    
     $ sudo apt install vim
-
+    
 ### python require libs for opencv
     $ sudo apt-get install libatlas-base-dev gfortran
     $ sudo apt-get install libjpeg8-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
