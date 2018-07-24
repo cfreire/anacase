@@ -1,12 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # anacase run script
-# 20180604 Cesar Freire
+# 20180724 Cesar Freire
 
-REPO='https://github.com/cfreire/anacase.git'
-cd ~/anacase
 echo 'sync github version'
+git checkout master
+git reset --hard HEAD~
 git pull
 echo 'startting anacase...'
-./anacase.py
-
+/usr/bin/python3 anacase.py
