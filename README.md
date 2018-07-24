@@ -1,6 +1,6 @@
 # ANACASE
 
-Sistema com hardware e software opensource para amostragem de bagagens
+Airport bag sampler using  hardware and software opensource
 
 ### Requirements
 
