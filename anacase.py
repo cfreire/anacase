@@ -12,7 +12,7 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.1.21'
+__version__ = '1.2.0'
 
 import sys
 import argparse as ap
@@ -22,8 +22,7 @@ import logging
 import config
 import camera
 import logger
-
-# import camera
+import hardware
 
 
 # DEFAULT FILE NAMES
@@ -75,6 +74,14 @@ def get_random_samples(random_param):
         return case_random
 
 
+def keyboard_events():
+    pass
+
+
+def mouse_events():
+    pass
+
+
 def main():
     """ MAIN APP """
     master_config = get_start_arguments()
@@ -82,6 +89,11 @@ def main():
     cfg = config.Config(master_config['config_file'])
     cfg.section('GLOBAL')
     logger.level(cfg.key('log_level'))
+    hw = hardware.Manager(keyboard=keyboard_events,
+                          mouse=mouse_events,
+                          leds=cfg.section('LED')
+                          )
+    
     cam = camera.Camera(camera_data=cfg.section('CAMERA'),
                         led_data=cfg.section('LED'),
                         random_data=get_random_samples(cfg.section('STATS')),
