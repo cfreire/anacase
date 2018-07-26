@@ -1,8 +1,8 @@
-import numpy as np
 import datetime
 import cv2
 import logging
 import sys
+import imutils
 
 import display
 import camera
@@ -100,8 +100,12 @@ class App:
     def compute_img(self):
         """See if objects pass beam"""
         self._frame = cv2.imread(self._image_template, cv2.IMREAD_ANYCOLOR)  # read background image
+        self._frame = imutils.resize(self._frame, self._width, self._height)
+        self._frame = self._frame[1:self._height, 1:self._width]
         if not self._operating:  # ENG mode
-            self.add_overlay()
+            self._frame = cv2.add(self._frame, self.cam.frame)
+            cv2.line(self._frame, (self._beam_position, 50),
+                     (self._beam_position, self._height - 100), green_color, 2)
         self.draw_data()  # draw info
         for obj in self.cam.objects:
             # calcular centro do contour
@@ -121,28 +125,6 @@ class App:
                 log.debug("counter {} ".format(self._stats.counter))
                 self._start_time = datetime.datetime.now()
         self.display.show(self._frame)
-
-    def add_overlay(self):
-        # Load two images
-        img1 = self._frame
-        img2 = self.cam.frame
-        # I want to put logo on top-left corner, So I create a ROI
-        rows, cols, channels = img2.shape
-        roi = img1[0:rows, 0:cols]
-        # Now create a mask of logo and create its inverse mask also
-        img2gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-        ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
-        mask_inv = cv2.bitwise_not(mask)
-        # Now black-out the area of logo in ROI
-        img1_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
-        # Take only region of logo from logo image.
-        img2_fg = cv2.bitwise_and(img2, img2, mask=mask)
-        # Put logo in ROI and modify the main image
-        dst = cv2.add(img1_bg, img2_fg)
-        img1[0:rows, 0:cols] = dst
-        self._frame = img1
-        cv2.line(self._frame, (self._beam_position, 50),
-                 (self._beam_position, self._height - 100), green_color, 2)
 
     @staticmethod
     def _wait_keypress():
