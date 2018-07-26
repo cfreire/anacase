@@ -639,7 +639,7 @@
        xlink:href="#linearGradient7024"
        id="linearGradient4231"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-10e-8,1.2607422,1.2607422,10e-8,434.10254,232.96875)"
+       gradientTransform="matrix(-1e-7,1.2607422,1.2607422,1e-7,434.10254,232.96875)"
        x1="0"
        y1="0"
        x2="1"
@@ -650,7 +650,7 @@
        xlink:href="#linearGradient7062"
        id="linearGradient4233"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-10e-8,1.1689405,1.1689405,10e-8,387.12939,233.06836)"
+       gradientTransform="matrix(-1e-7,1.1689405,1.1689405,1e-7,387.12939,233.06836)"
        x1="0"
        y1="0"
        x2="1"
@@ -845,8 +845,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.1340225"
-     inkscape:cx="534.43377"
-     inkscape:cy="222.52269"
+     inkscape:cx="328.97047"
+     inkscape:cy="116.70468"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
      showgrid="true"
@@ -854,7 +854,7 @@
      inkscape:window-width="1920"
      inkscape:window-height="1025"
      inkscape:window-x="0"
-     inkscape:window-y="1051"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:measure-start="552,536"
      inkscape:measure-end="264,280"
@@ -880,7 +880,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -7421,7 +7421,7 @@
        inkscape:export-filename="/home/cfreire/PycharmProjects/anacase/bag_red.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-266.69999,101.6)">
+       transform="translate(-332.31665,33.866665)">
       <g
          id="g1967"
          transform="matrix(0.2381403,0,0,-0.2381403,207.5892,97.159661)">
@@ -13917,7 +13917,7 @@
        inkscape:export-filename="/home/cfreire/PycharmProjects/anacase/bag_green.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-180.5376,101.6)">
+       transform="translate(-383.11666,-40.216666)">
       <g
          id="g6139"
          transform="matrix(0.2381403,0,0,-0.2381403,256.89347,97.159661)">
