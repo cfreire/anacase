@@ -18,6 +18,8 @@ green_color = (0, 255, 0)
 blue_color = (255, 0, 0)
 gray_color = (98, 98, 98)
 beacon_color = (0, 255, 0)
+light_color = (238, 255, 170)
+low_color = (102, 128, 0)
 
 log = logging.getLogger(__name__)
 
@@ -64,25 +66,25 @@ class App:
     def draw_data(self):
         """draw data on display"""
         cv2.putText(self._frame, 'bag counter', (50, 412),
-                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+                    cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
         cv2.putText(self._frame, '{:03d}'.format(self._stats.counter), (50, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'bag selected', (170, 412),
-                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+                    cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
         cv2.putText(self._frame, '{:03d}'.format(self._stats.sampled), (170, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'selected %', (290, 412),
-                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+                    cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
         cv2.putText(self._frame, '{:4.1f}'.format(self._stats.percentage), (290, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'mode', (410, 412),
-                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+                    cv2.FONT_HERSHEY_PLAIN, 1,light_color, 1)
         cv2.putText(self._frame, self._mode_name[self._mode_active], (410, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
-        cv2.putText(self._frame, 'time', (600, 412),
+        cv2.putText(self._frame, 'time', (730, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
         cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"), (600, 446),
-                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, light_color, 1)
 
     def compute_img(self):
         """See if objects pass beam"""
@@ -126,24 +128,24 @@ class App:
         if self._stats_active:
             t = self._stats.counter_by_time
             cv2.putText(self._frame, 'bag counter on last 5/15/60 min.', (50, 90),
-                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
             cv2.putText(self._frame, '{:03d}/{:03d}/{:03d}'.format(t['min5'], t['min15'], t['min60']), (50, 130),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
             t = self._stats.selected_by_time
             cv2.putText(self._frame, 'bag selected on last 5/15/60 min.', (50, 170),
-                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
             cv2.putText(self._frame, '{:03d}/{:03d}/{:03d}'.format(t['min5'], t['min15'], t['min60']), (50, 210),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
             cv2.putText(self._frame, 'first bag counter started at', (50, 250),
-                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
             cv2.putText(self._frame, self._stats.first_counter.strftime("%d/%m %H:%M:%S"), (50, 290),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
-            cv2.putText(self._frame, '60min rate', (500, 90),
-                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
-            cv2.putText(self._frame, '{:4.1f}%'.format(self._stats.percentage_by_time), (480, 130),
+            cv2.putText(self._frame, '60min rate', (480, 90),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
+            cv2.putText(self._frame, '{:4.1f}%'.format(self._stats.percentage_by_time), (470, 130),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
             cv2.putText(self._frame, 'CBF@{}'.format(self._software_version), (700, 470),
-                        cv2.FONT_HERSHEY_PLAIN, 0.7, white_color, 1)
+                        cv2.FONT_HERSHEY_PLAIN, 0.7, low_color, 1)
 
     def case_for_review(self):
         """Detect if object is for review"""
