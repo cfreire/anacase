@@ -2,7 +2,6 @@ import datetime
 import cv2
 import logging
 import sys
-import imutils
 
 import display
 import camera
@@ -42,7 +41,8 @@ class App:
             self._bag_select = float(display_data['bag_select'])
             self._image_template = display_data['image_template']
             self._bag_datetime = datetime.datetime.now()
-            self._operating = True
+            self._mode_name = ['RUN', 'VIEW']
+            self._mode_active = 0
             self._frame = None
             self._alarm = False
         except ValueError as ex:
@@ -71,12 +71,39 @@ class App:
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'mode', (410, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
-        cv2.putText(self._frame, 'RUN' if self._operating else 'ENG', (410, 446),
+        cv2.putText(self._frame, self._mode_name[self._mode_active], (410, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'time', (600, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
         cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"), (600, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+
+    def compute_img(self):
+        """See if objects pass beam"""
+        self._frame = cv2.imread(self._image_template, cv2.IMREAD_ANYCOLOR)  # read background image
+        if self._mode_active == 1:
+            self._frame = cv2.add(self._frame, self.cam.frame)
+            cv2.line(self._frame, (self._beam_position, 50),
+                     (self._beam_position, self._height - 100), green_color, 2)
+        self.draw_data()  # draw info
+        for obj in self.cam.objects:
+            # calcular centro do contour
+            M = cv2.moments(obj)
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
+            # draw objects in ENG mode
+            if self._mode_active != 0:
+                cv2.line(self._frame, (cx, cy), (cx, cy), green_color, 3)
+                (x, y, w, h) = cv2.boundingRect(obj)
+                cv2.rectangle(self._frame, (x, y), (x + w, y + h), green_color, 1)
+
+            # test if center of object near beam position
+            if self._beam_position - self._beam_dead_zone <= cx <= self._beam_position + self._beam_dead_zone and \
+                    (self._start_time + self._time_min_delta) < datetime.datetime.now():
+                self._stats.inc_counter()
+                log.debug("counter {} ".format(self._stats.counter))
+                self._start_time = datetime.datetime.now()
+        self.display.show(self._frame)
 
     def case_for_review(self):
         """Detect if object is for review"""
@@ -97,35 +124,6 @@ class App:
             log.debug('reset review alarm at {}'.format(datetime.datetime.now()))
             self._alarm = None
 
-    def compute_img(self):
-        """See if objects pass beam"""
-        self._frame = cv2.imread(self._image_template, cv2.IMREAD_ANYCOLOR)  # read background image
-        self._frame = imutils.resize(self._frame, self._width, self._height)
-        self._frame = self._frame[1:self._height, 1:self._width]
-        if not self._operating:  # ENG mode
-            self._frame = cv2.add(self._frame, self.cam.frame)
-            cv2.line(self._frame, (self._beam_position, 50),
-                     (self._beam_position, self._height - 100), green_color, 2)
-        self.draw_data()  # draw info
-        for obj in self.cam.objects:
-            # calcular centro do contour
-            M = cv2.moments(obj)
-            cx = int(M['m10'] / M['m00'])
-            cy = int(M['m01'] / M['m00'])
-            # draw objects in ENG mode
-            if not self._operating:
-                cv2.line(self._frame, (cx, cy), (cx, cy), green_color, 3)
-                (x, y, w, h) = cv2.boundingRect(obj)
-                cv2.rectangle(self._frame, (x, y), (x + w, y + h), green_color, 1)
-
-            # test if center of object near beam position
-            if self._beam_position - self._beam_dead_zone <= cx <= self._beam_position + self._beam_dead_zone and \
-                    (self._start_time + self._time_min_delta) < datetime.datetime.now():
-                self._stats.inc_counter()
-                log.debug("counter {} ".format(self._stats.counter))
-                self._start_time = datetime.datetime.now()
-        self.display.show(self._frame)
-
     @staticmethod
     def _wait_keypress():
         """ Test if key is pressed """
@@ -144,12 +142,9 @@ class App:
             log.debug('mouse clicked at {}x{}'.format(x, y))
             if x >= 600:
                 if menu['mode'][0] < y < menu['mode'][1]:
-                    if self._operating:
-                        self._operating = False
-                        log.debug('click in eng')
-                    else:
-                        self._operating = True
-                        log.debug('click in operating')
+                    self._mode_active += 1
+                    if self._mode_active >= len(self._mode_name):
+                        self._mode_active = 0
                 elif menu['cal'][0] < y < menu['cal'][1]:
                     self.cam.first_frame = None
                     log.debug('click in calibration')
