@@ -29,7 +29,7 @@ class Stats:
 
     def is_selected(self):
         if self.counter in self._case_random:
-            log.info('case {} select for review '.format(self.counter))
+            log.info('case id={} select for review '.format(self.counter))
             self._case_random.remove(self.counter)
             return True
 
@@ -37,8 +37,11 @@ class Stats:
         if self.counter < self.loop_sample:
             self.counter += 1
         else:
-            self.counter = 0
-            self._get_random_sample()
+            self.reset()
+
+    def reset(self):
+        self.counter = 0
+        self._get_random_sample()
 
     @property
     def percentage(self):

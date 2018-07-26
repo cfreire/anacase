@@ -1,5 +1,4 @@
 from time import sleep
-import imutils
 import cv2
 import logging
 import sys
@@ -15,7 +14,7 @@ class Camera:
         self.frame = None
         self.frame_delta = None
         self.frame_thresh = None
-        self._first_frame = None
+        self.first_frame = None
         self._gray_frame = None
         try:
             camera_id = int(camera_data['camera_id'])
@@ -61,14 +60,14 @@ class Camera:
         self.frame = cv2.resize(self.frame, (self._resize_width, self._resize_height))
         self._gray_frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         self._gray_frame = cv2.GaussianBlur(self._gray_frame, (self._gaussian_blur_value, self._gaussian_blur_value), 0)
-        if self._first_frame is None:
-            self._first_frame = self._gray_frame
+        if self.first_frame is None:
+            self.first_frame = self._gray_frame
 
     @property
     def objects(self):
         """ Compute the absolute difference between the current frame and first frame and find contours """
         self.calibrate()
-        self.frame_delta = cv2.absdiff(self._first_frame, self._gray_frame)
+        self.frame_delta = cv2.absdiff(self.first_frame, self._gray_frame)
         self.frame_thresh = cv2.threshold(self.frame_delta, self._threshold_value, 255, cv2.THRESH_BINARY)[1]
         self.frame_thresh = cv2.dilate(self.frame_thresh, None, iterations=2)
         im2, contours, hierarchy = cv2.findContours(self.frame_thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

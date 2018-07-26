@@ -44,7 +44,7 @@ class Display:
         cv2.destroyWindow(self._active_window)
         self._active_window = None
 
-    def show(self, frame=None):
+    def update(self, frame=None):
         """show window"""
         if self._active_window:
             cv2.imshow(self._active_window, frame)
@@ -66,7 +66,7 @@ def main():
     m = Display()
     m.window = 'debug'
     m.add_window_properties(cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    m.show(0)
+    m.update(0)
     cv2.waitKey(0)
 
 
