@@ -19,7 +19,7 @@ class Stats:
 
     def _get_random_sample(self):
         """ generate random case samples """
-        log.info('starting generate new random {}% of {}'.format(self.percentage_sample, self.loop_sample))
+        log.info('starting generating new random set {}%'.format(self.percentage_sample, self.loop_sample))
         while len(self._case_random) < self._total:
             luck = random.randrange(self.loop_sample) + 1
             if luck not in self._case_random:

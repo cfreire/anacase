@@ -81,17 +81,17 @@ class App:
     def compute_img(self):
         """See if objects pass beam"""
         self._frame = cv2.imread(self._image_template, cv2.IMREAD_ANYCOLOR)  # read background image
-        if self._mode_active == 1:
+        if self._mode_active == 1:  # VIEW MODE
             self._frame = cv2.add(self._frame, self.cam.frame)
             cv2.line(self._frame, (self._beam_position, 50),
                      (self._beam_position, self._height - 100), green_color, 2)
-        self.draw_data()  # draw info
+        self.draw_data()  # draw info text
         for obj in self.cam.objects:
             # calcular centro do contour
             M = cv2.moments(obj)
             cx = int(M['m10'] / M['m00'])
             cy = int(M['m01'] / M['m00'])
-            # draw objects in ENG mode
+            # draw objects in VIEW mode
             if self._mode_active != 0:
                 cv2.line(self._frame, (cx, cy), (cx, cy), green_color, 3)
                 (x, y, w, h) = cv2.boundingRect(obj)
@@ -145,21 +145,22 @@ class App:
                     self._mode_active += 1
                     if self._mode_active >= len(self._mode_name):
                         self._mode_active = 0
+                        log.debug('new mode selected "{}"'.format(self._mode_name[self._mode_active]))
                 elif menu['cal'][0] < y < menu['cal'][1]:
                     self.cam.first_frame = None
                     log.debug('click in calibration')
                 elif menu['reset'][0] < y < menu['reset'][1]:
-                    self._counter = 0
                     log.debug('click in reset')
+                    self._counter = 0
                 elif menu['stats'][0] < y < menu['stats'][1]:
-                    pass
                     log.debug('click in stats')
+                    pass
                 elif menu['quit'][0] < y < menu['quit'][1]:
                     log.debug('click in quit')
-                    sys.exit(1)
+                    self.close()
                 elif menu['void'][0] < y < menu['void'][1]:
-                    pass
                     log.debug('click in void')
+                    pass
 
     def run(self):
         self.compute_img()
@@ -170,4 +171,5 @@ class App:
 
     def close(self):
         self.cam.close()
-        log.info('    ... end ...')
+        log.info('ending APP ===============================')
+        sys.exit(0)
