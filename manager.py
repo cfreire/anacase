@@ -1,3 +1,5 @@
+__version__ = '1.0.0'
+
 import datetime
 import cv2
 import logging
@@ -47,6 +49,7 @@ class App:
             self._frame = None
             self._freeze = None
             self._alarm = False
+            self._stats_active = False
             self._scanner = 0
         except ValueError as ex:
             msg = 'error reading camera_data {}. Aborting!'.format(ex)
@@ -119,6 +122,29 @@ class App:
             if self._scanner > 100:
                 self._scanner = 0
 
+    def show_stats(self):
+        if self._stats_active:
+            t = self._stats.counter_by_time
+            cv2.putText(self._frame, 'bag counter on last 5/15/60 min.', (50, 90),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+            cv2.putText(self._frame, '{:03d}/{:03d}/{:03d}'.format(t['min5'], t['min15'], t['min60']), (50, 130),
+                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
+            t = self._stats.selected_by_time
+            cv2.putText(self._frame, 'bag selected on last 5/15/60 min.', (50, 170),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+            cv2.putText(self._frame, '{:03d}/{:03d}/{:03d}'.format(t['min5'], t['min15'], t['min60']), (50, 210),
+                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
+            cv2.putText(self._frame, 'first bag counter started at', (50, 250),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+            cv2.putText(self._frame, self._stats.first_counter.strftime("%d/%m %H:%M:%S"), (50, 290),
+                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
+            cv2.putText(self._frame, '60min rate', (500, 90),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, white_color, 1)
+            cv2.putText(self._frame, '{:4.1f}%'.format(self._stats.percentage_by_time), (480, 130),
+                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
+            cv2.putText(self._frame, 'CBF@{}'.format(self._software_version), (700, 470),
+                        cv2.FONT_HERSHEY_PLAIN, 0.7, white_color, 1)
+
     def case_for_review(self):
         """Detect if object is for review"""
         if self._stats.is_selected() and not self._alarm:
@@ -149,7 +175,7 @@ class App:
     def _mouse_clicks(self, event, x, y, flags, params):
         """ detect mouse / touch events """
         menu = {'mode': (23, 80), 'cal': (64, 150), 'reset': (184, 240),
-                'stats': (253, 290), 'quit': (300, 360)}
+                'stats': (253, 285), 'quit': (300, 360)}
         if event == cv2.EVENT_LBUTTONDOWN:
             log.debug('mouse clicked at {}x{}'.format(x, y))
             if x >= 600:
@@ -166,7 +192,10 @@ class App:
                     self._stats.reset()
                 elif menu['stats'][0] < y < menu['stats'][1]:
                     log.debug('click on stats')
-                    pass
+                    if self._stats_active:
+                        self._stats_active = False
+                    else:
+                        self._stats_active = True
                 elif menu['quit'][0] < y < menu['quit'][1]:
                     log.debug('click on quit')
                     self.close()
@@ -174,6 +203,7 @@ class App:
     def run(self):
         self.compute_img()
         self.case_for_review()
+        self.show_stats()
         self._led_manager.clear_leds()
         self._buzzer.stop_buzzer()
         self.display.update(self._frame)
