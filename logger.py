@@ -1,16 +1,16 @@
-__VERSION__ = '1.0.0'
+__version__ = '1.0.0'
 
 import logging
 import platform
 
 
-def setup(log_file, version='*version*', mode='a'):
+def setup(log_file, mode='a'):
     """start logging to file, write version and platform"""
     logging.basicConfig(filename=log_file,
                         format='%(asctime)s %(name)s\t%(levelname)s\t %(message)s',
                         filemode=mode,  # w = write / a = append
                         level=logging.INFO)
-    logging.info("starting logger version {} on platform {}".format(version, platform.machine()))
+    logging.info("starting logger on platform {}".format(platform.machine()))
 
 
 def level(log_type):

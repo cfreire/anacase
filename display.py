@@ -6,24 +6,17 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Manager:
-    """Manages project hardware, like display
-
-     display, keyboard, mouse, buzzer, leds, etc...
-    """
+class Display:
+    """Manages displays"""
 
     log = logging.getLogger(__name__)
 
-    def __init__(self,  keyboard=None, mouse=None, buzzer=None, leds=None):
-        self._windows = []
+    def __init__(self):
+        self.keyboard_events = None
+        self.mouse_clicks = None
         self._active_window = None
-        self._keyboard = keyboard
-        self._mouse_events = mouse
-        self._buzzer = buzzer
-        self._leds = leds
+        self._display = []
         self.log.info('success creating manager')
-
-    # display ###############################################################
 
     @property
     def window(self):
@@ -34,11 +27,11 @@ class Manager:
     @window.setter
     def window(self, window_title):
         """activate window or create new one if not exists"""
-        if window_title in self._windows:
+        if window_title in self._display:
             self._active_window = window_title
             self.log.debug('activating window "{}"'.format(window_title))
         else:
-            self._windows.append(window_title)
+            self._display.append(window_title)
             cv2.namedWindow(window_title, cv2.WND_PROP_AUTOSIZE)
             self._active_window = window_title
             self.log.debug('creating new window "{}"'.format(window_title))
@@ -47,7 +40,7 @@ class Manager:
     def window(self):
         """delete active window"""
         self.log.debug('deleting window "{}"'.format(self._active_window))
-        self._windows.remove(self._active_window)
+        self._display.remove(self._active_window)
         cv2.destroyWindow(self._active_window)
         self._active_window = None
 
@@ -55,7 +48,6 @@ class Manager:
         """show window"""
         if self._active_window:
             cv2.imshow(self._active_window, frame)
-            return Manager.process_events()
 
     def add_window_properties(self, *parameters):
         if self._active_window:
@@ -64,25 +56,18 @@ class Manager:
             log.warning('no active window')
             raise ValueError('no active window')
 
-    @staticmethod
-    def process_events():
-        """ Test if key is pressed """
-        key = cv2.waitKey(1) & 0xFF
-        # if the `q` key is pressed
-        if key == ord("q"):
-            return False
-        else:
-            return True
+    def __del__(self):
+        cv2.destroyAllWindows()
 
 
 def main():
     logging.basicConfig()
     logging.getLogger().setLevel(logging.DEBUG)
-    m = Manager()
+    m = Display()
     m.window = 'debug'
     m.add_window_properties(cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    while m.show(0):
-        pass
+    m.show(0)
+    cv2.waitKey(0)
 
 
 if __name__ == '__main__':

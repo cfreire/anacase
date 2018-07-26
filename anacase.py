@@ -16,13 +16,10 @@ __version__ = '1.2.0'
 
 import sys
 import argparse as ap
-import random
-import logging
 
 import config
-import camera
 import logger
-import hardware
+import manager
 
 
 # DEFAULT FILE NAMES
@@ -53,55 +50,22 @@ def get_start_arguments():
     return defaults
 
 
-def get_random_samples(random_param):
-    """ generate random case samples """
-    case_random = []
-    percentage_sample = int(random_param['percentage_sample'])
-    loop_sample = int(random_param['loop_sample'])
-    logging.info('starting generate random {}% of {}...'.format(percentage_sample, loop_sample))
-    try:
-        case_random.append(1)
-        for c in range(loop_sample // percentage_sample):
-            luck = random.randrange(loop_sample) + 1
-            case_random.append(luck)
-        case_random.sort()
-        logging.debug('random numbers {}'.format(case_random))
-        return case_random
-    except TypeError:
-        logging.error('error generating random numbers {} of {}'.format(percentage_sample, loop_sample))
-        case_random.append(1)  # generate only one random
-        logging.info('only one sample created [1]')
-        return case_random
-
-
-def keyboard_events():
-    pass
-
-
-def mouse_events():
-    pass
-
-
 def main():
     """ MAIN APP """
     master_config = get_start_arguments()
-    logger.setup(master_config['log_file'], __version__)
+    logger.setup(master_config['log_file'])
     cfg = config.Config(master_config['config_file'])
     cfg.section('GLOBAL')
     logger.level(cfg.key('log_level'))
-    hw = hardware.Manager(keyboard=keyboard_events,
-                          mouse=mouse_events,
-                          leds=cfg.section('LED')
-                          )
-    
-    cam = camera.Camera(camera_data=cfg.section('CAMERA'),
-                        led_data=cfg.section('LED'),
-                        random_data=get_random_samples(cfg.section('STATS')),
-                        buzzer_data=cfg.section('BUZZER'),
-                        version=__version__)
-    while cam.run():
+    app = manager.App(camera_data=cfg.section('CAMERA'),
+                      display_data=cfg.section('DISPLAY'),
+                      led_data=cfg.section('LED'),
+                      buzzer_data=cfg.section('BUZZER'),
+                      random_data=cfg.section('STATS'),
+                      version=__version__)
+    while app.run():
         pass
-    cam.close()
+    app.close()
 
 
 if __name__ == "__main__":
