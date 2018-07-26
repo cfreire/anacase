@@ -12,7 +12,7 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
 import sys
 import argparse as ap
@@ -53,10 +53,10 @@ def get_start_arguments():
 def main():
     """ MAIN APP """
     master_config = get_start_arguments()
-    logger.setup(master_config['log_file'])
+    logger.setup(master_config['log_file'], 'w')
     cfg = config.Config(master_config['config_file'])
     cfg.section('GLOBAL')
-    logger.level(cfg.key('log_level'))
+    logger.level(cfg.key('log_level'),)
     app = manager.App(camera_data=cfg.section('CAMERA'),
                       display_data=cfg.section('DISPLAY'),
                       led_data=cfg.section('LED'),

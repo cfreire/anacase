@@ -7,34 +7,58 @@ log = logging.getLogger(__name__)
 class Stats:
 
     def __init__(self, random_param):
-        self.parameters = random_param
-        self.case_random = []
+        self.percentage_sample = int(random_param['percentage_sample'])
+        if self.percentage_sample > 100:
+            log.warning('percentage sample value error "{}"'.format(self.percentage_sample))
+            raise ValueError('percentage sample value error')
+        self.loop_sample = int(random_param['loop_sample'])
+        self._case_random = []
+        self.counter = 0
+        self._total = int(self.loop_sample * self.percentage_sample / 100)
+        self._get_random_sample()
+
+    def _get_random_sample(self):
+        """ generate random case samples """
+        log.info('starting generate new random {}% of {}'.format(self.percentage_sample, self.loop_sample))
+        while len(self._case_random) < self._total:
+            luck = random.randrange(self.loop_sample) + 1
+            if luck not in self._case_random:
+                self._case_random.append(luck)
+            self._case_random.sort()
+        log.debug('random numbers generated {}'.format(self._case_random))
+
+    def is_selected(self):
+        if self.counter in self._case_random:
+            log.info('case {} select for review '.format(self.counter))
+            self._case_random.remove(self.counter)
+            return True
+
+    def inc_counter(self):
+        if self.counter < self.loop_sample:
+            self.counter += 1
+        else:
+            self.counter = 0
+            self._get_random_sample()
 
     @property
-    def random_samples(self):
-        """ generate random case samples """
-        percentage_sample = int(self.parameters['percentage_sample'])
-        loop_sample = int(self.parameters['loop_sample'])
-        logging.info('starting generate random {}% of {}...'.format(percentage_sample, loop_sample))
+    def percentage(self):
         try:
-            self.case_random.append(1)  # for debug
-            for c in range(loop_sample // percentage_sample):
-                luck = random.randrange(loop_sample) + 1
-                self.case_random.append(luck)
-                self.case_random.sort()
-            logging.debug('random numbers {}'.format(self.case_random))
-            return self.case_random
-        except TypeError:
-            logging.error('error generating random numbers {} of {}'.format(percentage_sample, loop_sample))
-            self.case_random.append(1)  # generate only one random
-            logging.info('only one sample created [1]')
-            return self.case_random
+            return round((self.sampled / self.counter) * 100, 1)
+        except ZeroDivisionError:
+            return 0.0
+
+    @property
+    def sampled(self):
+        return self._total - len(self._case_random)
 
 
 if __name__ == '__main__':
     # simple explore test
     logging.basicConfig()
     logging.getLogger().setLevel(logging.DEBUG)
-    random_data = {'percentage_sample': '10', 'loop_sample': '1000'}
+    random_data = {'percentage_sample': '100', 'loop_sample': '10'}
     stats = Stats(random_data)
-    print(stats.random_samples)
+    for n in range(20):
+        print('counter: {}\tselected: {}\tpercentage: {}'.format(stats.counter, stats.sampled, stats.percentage))
+        stats.inc_counter()
+        stats.is_selected()

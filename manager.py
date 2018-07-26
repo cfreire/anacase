@@ -31,7 +31,7 @@ class App:
             self.cam = camera.Camera(camera_data)
             self._led_manager = leds.Leds(led_data)
             self._buzzer = buzzer.Buzzer(buzzer_data)
-            self._case_review = stats.Stats(random_data).random_samples
+            self._stats = stats.Stats(random_data)
             self._software_version = version
             self._start_time = datetime.datetime.now()
             self._time_min_delta = datetime.timedelta(seconds=float(display_data['time_min_delta']))
@@ -40,94 +40,75 @@ class App:
             self._height = int(display_data['image_height'])
             self._width = int(display_data['image_width'])
             self._bag_select = float(display_data['bag_select'])
+            self._image_template = display_data['image_template']
             self._bag_datetime = datetime.datetime.now()
-            self._operating = None
+            self._operating = True
             self._frame = None
             self._alarm = False
-            self._counter = 0
-            self._freeze_frame = None
         except ValueError as ex:
             msg = 'error reading camera_data {}. Aborting!'.format(ex)
             log.error(msg)
             sys.exit(msg)
 
-    def display_eng_mode(self):
-        """ MODO ENG """
-        self._frame = self.cam.frame
-        self.display.window = 'ENGINEERING WINDOW'
+        # start display
+        self.display.window = 'ANACASE {}'.format(self._software_version)
         self.display.add_window_properties(cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         cv2.setMouseCallback(self.display.window, self._mouse_clicks)
-        cv2.line(self._frame, (self._beam_position, 50), (self._beam_position, self._height - 35), green_color, 2)
-        cv2.rectangle(self._frame, (0, 0), (self._width, 30), gray_color, thickness=-1)  # upper gray
-        cv2.putText(self._frame, "Counter: {:03d}".format(self._counter),
-                    (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, white_color, 1)  # counter
-        cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"),
-                    (self._width - 100, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, white_color, 1)  # date at right
-        cv2.rectangle(self._frame, (0, self._height), (self._width, self._height - 15),
-                      gray_color, thickness=-1)
 
-    def display_operating_mode(self):
-        """  MODO OPERATION """
-        if self._counter == 0:
-            percent = 0
-        else:
-            percent = 51 - len(self._case_review)
-        msg = "counter: {:03d} | selected: {:03d} | percentage: {:4.1f}%".format(self._counter, percent,
-                            (51 - len(self._case_review)) / (self._counter+1) * 100)  # FIXME parameters
+    def draw_data(self):
+        """draw data on display"""
+        cv2.putText(self._frame, 'bag counter', (50, 412),
+                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+        cv2.putText(self._frame, '{:03d}'.format(self._stats.counter), (50, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+        cv2.putText(self._frame, 'bag selected', (170, 412),
+                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+        cv2.putText(self._frame, '{:03d}'.format(self._stats.sampled), (170, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+        cv2.putText(self._frame, 'selected %', (290, 412),
+                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+        cv2.putText(self._frame, '{:4.1f}'.format(self._stats.percentage), (290, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+        cv2.putText(self._frame, 'mode', (410, 412),
+                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+        cv2.putText(self._frame, 'RUN' if self._operating else 'ENG', (410, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+        cv2.putText(self._frame, 'time', (600, 412),
+                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+        cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"), (600, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
+
+    def case_for_review(self):
+        """Detect if object is for review"""
+        if self._stats.is_selected() and not self._alarm:
+            log.info('case {} select for review at {}'.format(self._stats.counter, datetime.datetime.now()))
+            self._bag_datetime = datetime.datetime.now()
+            self._alarm = True
+            self._led_manager.activate_red()
+            self._buzzer.activate_buzzer()
         if self._alarm:
-            cv2.putText(self._freeze_frame, msg, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, white_color, 1)
-            cv2.rectangle(self._freeze_frame, (0, 35), (self._width, self._height - 30), red_color, 20)
-            self._frame = self._freeze_frame
-        else:
-            self._frame = np.zeros((self._height, self._width, 3), np.uint8)
-            cv2.putText(self._frame, msg, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, white_color, 1)
-            cv2.putText(self._frame, "{:03d}".format(self._counter), (self._height // 2, self._width // 2 - 100),
-                        cv2.FONT_HERSHEY_DUPLEX, 5, white_color, 1)
-        cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"),
-                    (self._width - 100, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, white_color, 1)
-        # clear image after timeout
-        timeout = self._bag_datetime + datetime.timedelta(seconds=self._bag_select)
+            # TODO merge image
+            # capture = self.cam.frame
+            # cv2.copyMakeBorder(self._freeze_frame, capture)
+            # self._freeze_frame = cv2.bitwise_and(self._frame, capture)
+            cv2.rectangle(self._frame, (41, 81), (552, 336), red_color, 5)
+        timeout = self._bag_datetime + datetime.timedelta(seconds=self._bag_select)  # clear image after timeout
         if self._alarm and (timeout < datetime.datetime.now()):
             log.debug('reset review alarm at {}'.format(datetime.datetime.now()))
             self._alarm = None
 
-    def lower_menu(self):
-        cv2.putText(self._frame, 'QUIT', (10, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, white_color, 1)
-        cv2.putText(self._frame, 'CAL', (10 + 80, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, white_color, 1)
-        cv2.putText(self._frame, 'RESET', (10 + 80 * 2, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, white_color, 1)
-        cv2.putText(self._frame, 'OPER', (10 + 80 * 3, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, white_color, 1)
-        cv2.putText(self._frame, 'ENG', (10 + 80 * 4, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, white_color, 1)
-        cv2.putText(self._frame, self._software_version, (10 + 80 * 9, self._height - 2), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, white_color, 1)
-        for i in range(10):
-            cv2.line(self._frame, (i * 80, self._height), (i * 80, self._height - 15), white_color, 1)
-
-    def case_for_review(self):
-        """ Detect if case is for review"""
-        if self._counter in self._case_review and not self._alarm:
-            self._alarm = True
-            self._case_review.remove(self._counter)  # remove case from list
-            log.info('case {} select for review at {}'.format(self._counter, datetime.datetime.now()))
-            self._bag_datetime = datetime.datetime.now()
-            self._freeze_frame = self._frame
-            self._led_manager.activate_red()
-            self._buzzer.activate_buzzer()
-
     def compute_img(self):
         """See if objects pass beam"""
-        img_objects = self.cam.objects
-        for obj in img_objects:
+        self._frame = cv2.imread(self._image_template, cv2.IMREAD_ANYCOLOR)  # read background image
+        if not self._operating:  # ENG mode
+            self.add_overlay()
+        self.draw_data()  # draw info
+        for obj in self.cam.objects:
             # calcular centro do contour
             M = cv2.moments(obj)
             cx = int(M['m10'] / M['m00'])
             cy = int(M['m01'] / M['m00'])
-
-            # draw windows objects in eng mode
+            # draw objects in ENG mode
             if not self._operating:
                 cv2.line(self._frame, (cx, cy), (cx, cy), green_color, 3)
                 (x, y, w, h) = cv2.boundingRect(obj)
@@ -136,56 +117,79 @@ class App:
             # test if center of object near beam position
             if self._beam_position - self._beam_dead_zone <= cx <= self._beam_position + self._beam_dead_zone and \
                     (self._start_time + self._time_min_delta) < datetime.datetime.now():
-                self._counter += 1
-                log.debug("counter {} ".format(self._counter))
+                self._stats.inc_counter()
+                log.debug("counter {} ".format(self._stats.counter))
                 self._start_time = datetime.datetime.now()
-            # reset _counter
-            if self._counter >= 1000:  # FIXME parameter loop
-                log.debug('counter recycled at 1000')
-                self._counter = 0
-
-    def run(self):
-        self.compute_img()
-        if self._operating:
-            self.case_for_review()
-            self.display_operating_mode()
-        else:
-            self.display_eng_mode()
-        self.lower_menu()
         self.display.show(self._frame)
-        # self._led_manager.clear_leds()
-        # self._buzzer.stop_buzzer()
-        return App._wait_keypress()
+
+    def add_overlay(self):
+        # Load two images
+        img1 = self._frame
+        img2 = self.cam.frame
+        # I want to put logo on top-left corner, So I create a ROI
+        rows, cols, channels = img2.shape
+        roi = img1[0:rows, 0:cols]
+        # Now create a mask of logo and create its inverse mask also
+        img2gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+        ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
+        mask_inv = cv2.bitwise_not(mask)
+        # Now black-out the area of logo in ROI
+        img1_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
+        # Take only region of logo from logo image.
+        img2_fg = cv2.bitwise_and(img2, img2, mask=mask)
+        # Put logo in ROI and modify the main image
+        dst = cv2.add(img1_bg, img2_fg)
+        img1[0:rows, 0:cols] = dst
+        self._frame = img1
+        cv2.line(self._frame, (self._beam_position, 50),
+                 (self._beam_position, self._height - 100), green_color, 2)
 
     @staticmethod
     def _wait_keypress():
         """ Test if key is pressed """
         key = cv2.waitKey(1) & 0xFF
-        # if the `q` key is pressed
-        if key == ord("q"):
-            log.debug('q pressed. Quiting')
+        if key == ord("q"):  # if the `q` key is pressed
+            log.debug('q pressed. Quiting!')
             return False
         else:
             return True
 
     def _mouse_clicks(self, event, x, y, flags, params):
         """ detect mouse / touch events """
+        menu = {'mode': (23, 80), 'cal': (64, 150), 'reset': (165, 187),
+                'stats': (253, 290), 'quit': (300, 360), 'void': (375, 430)}
         if event == cv2.EVENT_LBUTTONDOWN:
-            if y >= self._height - 15:
-                if 0 < x < 80:  # quit
-                    sys.exit()
-                elif 80 <= x < 80*2:  # cal
-                    log.info('doing calibration')
+            log.debug('mouse clicked at {}x{}'.format(x, y))
+            if x >= 600:
+                if menu['mode'][0] < y < menu['mode'][1]:
+                    if self._operating:
+                        self._operating = False
+                        log.debug('click in eng')
+                    else:
+                        self._operating = True
+                        log.debug('click in operating')
+                elif menu['cal'][0] < y < menu['cal'][1]:
                     self.cam.first_frame = None
-                elif 80*2 <= x < 80*3:  # reset
-                    log.info('reset counter at {}'.format(self._counter))
+                    log.debug('click in calibration')
+                elif menu['reset'][0] < y < menu['reset'][1]:
                     self._counter = 0
-                elif 80*3 <= x < 80*4:  # start _operating
-                    log.info('start operating mode')
-                    self._operating = True
-                elif 80*4 <= x < 80*5:  # start _operating
-                    log.info('start eng mode')
-                    self._operating = False
+                    log.debug('click in reset')
+                elif menu['stats'][0] < y < menu['stats'][1]:
+                    pass
+                    log.debug('click in stats')
+                elif menu['quit'][0] < y < menu['quit'][1]:
+                    log.debug('click in quit')
+                    sys.exit(1)
+                elif menu['void'][0] < y < menu['void'][1]:
+                    pass
+                    log.debug('click in void')
+
+    def run(self):
+        self.compute_img()
+        self.case_for_review()
+        self._led_manager.clear_leds()
+        self._buzzer.stop_buzzer()
+        return App._wait_keypress()
 
     def close(self):
         self.cam.close()

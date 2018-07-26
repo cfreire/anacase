@@ -16,7 +16,7 @@ class Display:
         self.mouse_clicks = None
         self._active_window = None
         self._display = []
-        self.log.info('success creating manager')
+        self.log.info('success creating display manager')
 
     @property
     def window(self):

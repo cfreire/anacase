@@ -54,9 +54,8 @@ class Camera:
             _log.critical('error reading frame from camera')
             sys.exit('abnormal program termination!')
         # resize camera frame
-        frame = imutils.resize(frame, self._width, self._height)
-        frame = frame[1:self._height, 1:self._width]
-        self.frame = frame
+        self.frame = imutils.resize(self.frame, self._width, self._height)
+        self.frame = frame[1:self._height, 1:self._width]
         # gray conversion
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # blur conversion
