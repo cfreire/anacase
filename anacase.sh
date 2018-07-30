@@ -4,7 +4,7 @@
 # 20180724 Cesar Freire
 
 echo 'sync github version'
-git checkout master
+git checkout develop
 git reset --hard HEAD~
 git pull
 echo 'startting anacase...'
