@@ -120,7 +120,7 @@ class App:
                 except cv2.error:
                     log.error('error loading image "{}"'.format(self._image_bag))
                 self._frame = cv2.line(self._frame, (270, 200+self._scanner), (440, 200 + self._scanner), green_color, 2)
-                self._scanner += 4
+                self._scanner += 10
             if self._scanner > 100:
                 self._scanner = 0
 
