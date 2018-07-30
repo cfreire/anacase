@@ -112,6 +112,7 @@ class App:
                 self._stats.inc_counter()
                 log.debug("new bag detected. id={:03d} ".format(self._stats.counter))
                 self._start_time = datetime.datetime.now()
+                self._led_manager.activate_green()
                 self._scanner = 1
             if self._scanner > 0:
                 try:
