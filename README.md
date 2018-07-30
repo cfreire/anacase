@@ -5,7 +5,7 @@ Sistema com hardware e software opensource para amostragem de bagagens
 ### Requirements
 
 * Raspberry Pi 3 B
-* Touch 7"
+* Touch 10" (800x480)
 * Python3
 * TODO (...)
 
@@ -18,11 +18,6 @@ Sistema com hardware e software opensource para amostragem de bagagens
     $ sudo apt remove libreoffice*
     $ sudo apt purge wolfram*
     $ sudo apt upgrade
-
-### touch xpt2046
-    $ wget https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)#Driver
-    $ sudo apt-get install -y libts-bin evtest xinput python-dev python-pip7
-    $ sudo apt install vim
 
 ### python libs
     $ sudo apt-get install libatlas-base-dev gfortran
