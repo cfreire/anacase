@@ -12,18 +12,14 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.1.20'
+__version__ = '1.2.6'
 
 import sys
 import argparse as ap
-import random
-import platform
-import logging
 
 import config
-import camera
-
-# import camera
+import logger
+import manager
 
 
 # DEFAULT FILE NAMES
@@ -54,61 +50,23 @@ def get_start_arguments():
     return defaults
 
 
-def setup_logger(log_file=_logfile_):
-    """ logger format, setup and start mode (write,append) """
-    logging.basicConfig(filename=log_file,
-                        format='%(asctime)s %(name)s\t%(levelname)s\t %(message)s',
-                        filemode='w',  # w = write / a = append
-                        level=logging.INFO)
-    mac = platform.machine()
-    logging.info("starting logger on {}".format(mac))
-
-
-def change_log_level(log_type):
-    try:
-        logging.info('changing log level to {}'.format(log_type))
-        logging.getLogger().setLevel(log_type)
-    except ValueError:
-        logging.warning('cannot change log level to {}'.format(log_type))
-
-
-def get_random_samples(random_param):
-    """ generate random case samples """
-    case_random = []
-    percentage_sample = int(random_param['percentage_sample'])
-    loop_sample = int(random_param['loop_sample'])
-    logging.info('starting generate random {}% of {}...'.format(percentage_sample, loop_sample ))
-    try:
-        case_random.append(1)
-        for c in range(loop_sample // percentage_sample):
-            luck = random.randrange(loop_sample) + 1
-            case_random.append(luck)
-        case_random.sort()
-        logging.debug('random numbers {}'.format(case_random))
-        return case_random
-    except TypeError:
-        logging.error('error generating random numbers {} of {}'.format(percentage_sample, loop_sample))
-        case_random.append(1)  # generate only one random
-        logging.info('only one sample created [1]')
-        return case_random
-
-
 def main():
     """ MAIN APP """
     master_config = get_start_arguments()
-    setup_logger(master_config['log_file'])
+    logger.setup(master_config['log_file'], 'w')
     cfg = config.Config(master_config['config_file'])
-    change_log_level(cfg.get_str('GLOBAL', 'log_level'))
-    random_data = get_random_samples(cfg.get('STATS'))
-    led_data = cfg.get('LED')
-    camera_data = cfg.get('CAMERA')
-    buzzer_data = cfg.get('BUZZER')
-    cam = camera.Camera(camera_data, led_data, random_data, buzzer_data, __version__)
-    while cam.run():
+    cfg.section('GLOBAL')
+    logger.level(cfg.key('log_level'),)
+    app = manager.App(camera_data=cfg.section('CAMERA'),
+                      display_data=cfg.section('DISPLAY'),
+                      led_data=cfg.section('LED'),
+                      buzzer_data=cfg.section('BUZZER'),
+                      random_data=cfg.section('STATS'),
+                      version=__version__)
+    while app.run():
         pass
-    cam.close()
+    app.close()
 
 
 if __name__ == "__main__":
     main()
-
