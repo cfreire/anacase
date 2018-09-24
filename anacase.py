@@ -6,13 +6,14 @@
  Projecto ANACASE
  ================
 
- Gestor de sorteio de bagagens para o aeroporto de Lisboa
- utilizando hardware e software opensource
+ Counter and random sampler of moving objects,
+ using python computer vision (opencv).
+
 
  usage: ./anacase.py
 
 """
-__version__ = '1.2.6'
+__version__ = '1.3.0'
 
 import sys
 import argparse as ap
@@ -54,14 +55,14 @@ def main():
     """ MAIN APP """
     master_config = get_start_arguments()
     logger.setup(master_config['log_file'], 'w')
-    cfg = config.Config(master_config['config_file'])
-    cfg.section('GLOBAL')
-    logger.level(cfg.key('log_level'),)
-    app = manager.App(camera_data=cfg.section('CAMERA'),
-                      display_data=cfg.section('DISPLAY'),
-                      led_data=cfg.section('LED'),
-                      buzzer_data=cfg.section('BUZZER'),
-                      random_data=cfg.section('STATS'),
+    config.init(master_config['config_file'])
+    config.set_section('GLOBAL')
+    logger.level(config.key['log_level'])
+    app = manager.App(camera_data=config.set_section('CAMERA'),
+                      display_data=config.set_section('DISPLAY'),
+                      led_data=config.set_section('LED'),
+                      buzzer_data=config.set_section('BUZZER'),
+                      random_data=config.set_section('STATS'),
                       version=__version__)
     while app.run():
         pass

@@ -4,12 +4,9 @@ import configparser
 import logging
 
 __version__ = '1.2.0'
-
-# ----------------------------------
-# internals
 _log = logging.getLogger(__name__)
-global key
-key = dict()
+
+key = dict()  # global dictionary
 
 
 def init(config_file_name):

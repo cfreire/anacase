@@ -91,8 +91,7 @@ class App:
         self._frame = cv2.imread(self._image_template, cv2.IMREAD_ANYCOLOR)  # read background image
         if self._mode_active == 1:  # add camera live view
             self._frame = cv2.add(self._frame, self.cam.frame)
-            cv2.line(self._frame, (self._beam_position, 50),
-                     (self._beam_position, self._height - 100), green_color, 2)
+            cv2.line(self._frame, (200, self._beam_position-80), (600, self._beam_position), green_color, 2)
         self.draw_data()  # draw info text
         for obj in self.cam.objects:
             # calcular centro do contour
@@ -106,8 +105,8 @@ class App:
                 (x, y, w, h) = cv2.boundingRect(obj)
                 cv2.rectangle(self._frame, (x, y), (x + w, y + h), green_color, 1)
 
-            # test if center of object near beam position and couting
-            if self._beam_position - self._beam_dead_zone <= cx <= self._beam_position + self._beam_dead_zone and \
+            # test if center of object near beam position and counting
+            if self._beam_position - self._beam_dead_zone <= cy <= self._beam_position + self._beam_dead_zone and \
                     (self._start_time + self._time_min_delta) < datetime.datetime.now():
                 self._stats.inc_counter()
                 log.debug("new bag detected. id={:03d} ".format(self._stats.counter))
