@@ -13,7 +13,7 @@
  usage: ./anacase.py
 
 """
-__version__ = '1.4.0'
+__version__ = '1.4.1'
 
 import sys
 import argparse as ap
