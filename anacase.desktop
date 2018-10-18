@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.4
-Name=ANAcase
-Comment=Sistema com hardware e software opensource para amostragem de bagagens
+Name=AnaCase
+Comment=Counter and random sampler of moving objects, using python computer vision (opencv).
 Icon = /home/pi/anacase/anacase-small.png
 Path = /home/pi/anacase
 Exec = /home/pi/anacase/anacase.sh
