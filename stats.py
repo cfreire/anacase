@@ -15,6 +15,7 @@ class Stats:
         self.loop_sample = int(random_param['loop_sample'])
         self._case_random = []
         self.counter = 0
+        self._ack = 0
         self._time_counter = []
         self._time_selected = []
 
@@ -24,12 +25,13 @@ class Stats:
     def _get_random_sample(self):
         """ generate random case samples """
         log.info('starting generating new random set {}%'.format(self.percentage_sample, self.loop_sample))
+        self._case_random =[]
         while len(self._case_random) < self._total:
             luck = random.randrange(self.loop_sample) + 1
             if luck not in self._case_random:
                 self._case_random.append(luck)
             self._case_random.sort()
-        log.debug('random numbers generated {}'.format(self._case_random))
+        log.debug('{}/{} random numbers generated {}'.format(len(self._case_random), self.loop_sample, self._case_random))
 
     def is_selected(self):
         if self.counter in self._case_random:
@@ -47,6 +49,7 @@ class Stats:
 
     def reset(self):
         self.counter = 0
+        self._ack = 0
         self._get_random_sample()
         self._time_counter = []
         self._time_selected = []
@@ -111,6 +114,14 @@ class Stats:
     @property
     def sampled(self):
         return self._total - len(self._case_random)
+
+    @property
+    def ack(self):
+        return self._ack
+
+    def inc_ack(self):
+        if self.counter < self.loop_sample:
+            self._ack += 1
 
 
 if __name__ == '__main__':

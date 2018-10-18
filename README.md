@@ -17,15 +17,13 @@ Counter and random sampler of moving objects, using python computer vision (open
     
 ### Removing unwanted apps in raspi
     $ sudo apt update
-    $ sudo apt remove libreoffice*
+    $ sudo apt purge libreoffice*
     $ sudo apt purge wolfram*
     $ sudo apt upgrade
     
 ### python require libs for opencv
-    $ sudo apt-get install -y libatlas-base-dev gfortran libjpeg8-dev \ 
-                            libjasper-dev libpng12-dev libavcodec-dev \ 
-                            libavformat-dev libswscale-dev libv4l-dev libqt4-dev
-    $ sudo pip3 install python-opencv
+    $ sudo apt install -y libatlas-base-dev gfortran libjpeg8-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libqt4-dev
+    $ sudo pip3 install opencv-python
     $ sudo pip3 install imutils
 ---
 **Verify python libs**  
