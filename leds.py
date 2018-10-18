@@ -29,6 +29,8 @@ class Leds:
         self._red_datetime = datetime.datetime.now()
         self._red_active = False
         self._green_active = False
+        self.activate_green()
+        self.activate_red()
 
     def activate_red(self):
         if not self._red_active:
