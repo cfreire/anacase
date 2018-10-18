@@ -7,5 +7,5 @@ echo 'sync github version'
 git checkout master
 git reset --hard HEAD~
 git pull
-echo 'startting anacase...'
+echo 'starting anacase...'
 /usr/bin/python3 anacase.py
