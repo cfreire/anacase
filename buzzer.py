@@ -23,6 +23,7 @@ class Buzzer:
             Io.setmode(Io.BCM)
             Io.setup(BUZZER_PIN, Io.OUT)
             self._buzzer = Io.PWM(BUZZER_PIN, 100)
+            self.activate_buzzer()
         else:
             log.warning('no support for buzzer on platform {}'.format(machine()))
 

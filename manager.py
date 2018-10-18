@@ -87,6 +87,8 @@ class App:
                     cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
         cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"), (600, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, light_color, 1)
+        cv2.putText(self._frame, 'v{}'.format(self._software_version), (700, 472),
+                    cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
 
     def compute_img(self):
         """See if objects pass beam"""
@@ -161,8 +163,8 @@ class App:
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
             cv2.putText(self._frame, ' {:03d}'.format(self._stats.ack), (470, 210),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
-            cv2.putText(self._frame, 'CBF@{}'.format(self._software_version), (700, 470),
-                        cv2.FONT_HERSHEY_PLAIN, 0.7, low_color, 1)
+            cv2.putText(self._frame, 'v{}'.format(self._software_version), (700, 472),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
 
     def case_for_review(self):
         """Detect if object is for review"""
@@ -236,5 +238,5 @@ class App:
 
     def close(self):
         self.cam.close()
-        log.info('ending APP ===============================')
+        log.info('ending APP -------------')
         sys.exit(0)
