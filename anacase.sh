@@ -2,7 +2,7 @@
 
 # anacase run script
 # 20181018 Cesar Freire
-cd ~/anacase:
+cd ~/anacase/
 echo 'sync github version'
 git reset --hard HEAD~
 git checkout master
