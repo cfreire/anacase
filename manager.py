@@ -68,15 +68,15 @@ class App:
         """draw data on display"""
         cv2.putText(self._frame, 'bag counter', (50, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
-        cv2.putText(self._frame, '{:03d}'.format(self._stats.counter), (50, 446),
+        cv2.putText(self._frame, '{:04d}'.format(self._stats.counter), (50, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
-        cv2.putText(self._frame, '{:03d}'.format(self._stats.counter), (50, 446),
+        cv2.putText(self._frame, '{:04d}'.format(self._stats.counter), (50, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'bag selected', (170, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
-        cv2.putText(self._frame, '{:03d}'.format(self._stats.sampled), (170, 446),
+        cv2.putText(self._frame, '{:04d}'.format(self._stats.sampled), (170, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
-        cv2.putText(self._frame, '{:03d}'.format(self._stats.sampled), (170, 446),
+        cv2.putText(self._frame, '{:04d}'.format(self._stats.sampled), (170, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'selected %', (290, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
@@ -153,12 +153,12 @@ class App:
             t = self._stats.counter_by_time
             cv2.putText(self._frame, 'bag counter on last 5/15/60 min.', (50, 90),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
-            cv2.putText(self._frame, '{:03d}/{:03d}/{:03d}'.format(t['min5'], t['min15'], t['min60']), (50, 130),
+            cv2.putText(self._frame, '{:04d}/{:04d}/{:04d}'.format(t['min5'], t['min15'], t['min60']), (50, 130),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
             t = self._stats.selected_by_time
             cv2.putText(self._frame, 'bag selected on last 5/15/60 min.', (50, 170),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
-            cv2.putText(self._frame, '{:03d}/{:03d}/{:03d}'.format(t['min5'], t['min15'], t['min60']), (50, 210),
+            cv2.putText(self._frame, '{:04d}/{:04d}/{:04d}'.format(t['min5'], t['min15'], t['min60']), (50, 210),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
             cv2.putText(self._frame, 'first bag seen on', (50, 250),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
@@ -170,7 +170,7 @@ class App:
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
             cv2.putText(self._frame, 'OPER ACK', (480, 170),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
-            cv2.putText(self._frame, ' {:03d}'.format(self._stats.ack), (470, 210),
+            cv2.putText(self._frame, ' {:04d}'.format(self._stats.ack), (470, 210),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
             cv2.putText(self._frame, 'v{}'.format(self._software_version), (700, 472),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
