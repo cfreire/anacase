@@ -3,7 +3,7 @@
 import configparser
 import logging
 
-__version__ = '1.2.0'
+
 _log = logging.getLogger(__name__)
 
 key = dict()  # global dictionary

@@ -1,5 +1,3 @@
-__version__ = '1.1.0'
-
 import datetime
 import cv2
 import logging
@@ -13,6 +11,7 @@ import stats
 
 # colors
 white_color = (255, 255, 255)
+black_color = (0, 0, 0)
 red_color = (0, 0, 255)
 green_color = (0, 255, 0)
 blue_color = (255, 0, 0)
@@ -70,23 +69,33 @@ class App:
         cv2.putText(self._frame, 'bag counter', (50, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
         cv2.putText(self._frame, '{:03d}'.format(self._stats.counter), (50, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
+        cv2.putText(self._frame, '{:03d}'.format(self._stats.counter), (50, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'bag selected', (170, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
+        cv2.putText(self._frame, '{:03d}'.format(self._stats.sampled), (170, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
         cv2.putText(self._frame, '{:03d}'.format(self._stats.sampled), (170, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'selected %', (290, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
         cv2.putText(self._frame, '{:4.1f}'.format(self._stats.percentage), (290, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
+        cv2.putText(self._frame, '{:4.1f}'.format(self._stats.percentage), (290, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'mode', (410, 412),
                     cv2.FONT_HERSHEY_PLAIN, 1,light_color, 1)
         cv2.putText(self._frame, self._mode_name[self._mode_active], (410, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
+        cv2.putText(self._frame, self._mode_name[self._mode_active], (410, 446),
                     cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'time', (730, 412),
-                    cv2.FONT_HERSHEY_PLAIN, 1, white_color, 1)
+                    cv2.FONT_HERSHEY_PLAIN, 1, light_color, 1)
         cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"), (600, 446),
-                    cv2.FONT_HERSHEY_DUPLEX, 1.2, light_color, 1)
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, black_color, 3)
+        cv2.putText(self._frame, datetime.datetime.now().strftime("%H:%M:%S"), (600, 446),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.2, white_color, 1)
         cv2.putText(self._frame, 'v{}'.format(self._software_version), (700, 472),
                     cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
 
@@ -238,5 +247,5 @@ class App:
 
     def close(self):
         self.cam.close()
-        log.info('ending APP -------------')
+        log.info('ending APP')
         sys.exit(0)

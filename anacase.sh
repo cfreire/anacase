@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # anacase run script
-# 20181018 Cesar Freire
+# 20181104 Cesar Freire
 cd ~/anacase/
 echo 'sync github version'
 git reset --hard HEAD~
