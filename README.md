@@ -22,8 +22,9 @@ Counter and random sampler of moving objects, using python computer vision (open
     $ sudo apt upgrade
     
 ### python require libs for opencv
-    $ sudo apt install -y libatlas-base-dev gfortran libjpeg8-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libqt4-dev
-    $ sudo pip3 install opencv-python
+    $ sudo apt-get install build-essential cmake git pkg-config
+    $ sudo apt install -y libatlas-base-dev gfortran libjpeg-dev  \ 
+      libpng-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libqt4-dev
     $ sudo pip3 install imutils
 ---
 **Verify python libs**  
