@@ -164,14 +164,10 @@ class App:
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
             cv2.putText(self._frame, self._stats.first_counter.strftime("%d/%m %H:%M:%S"), (50, 290),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
-            cv2.putText(self._frame, '60min rate', (480, 90),
+            cv2.putText(self._frame, 'operator ack counter', (50, 330),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
-            cv2.putText(self._frame, '{:4.1f}%'.format(self._stats.percentage_by_time), (470, 130),
-                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
-            cv2.putText(self._frame, 'OPER ACK', (480, 170),
-                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
-            cv2.putText(self._frame, ' {:04d}'.format(self._stats.ack), (470, 210),
-                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 3)
+            cv2.putText(self._frame, '{:04d}'.format(self._stats.ack), (50, 370),
+                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
             cv2.putText(self._frame, 'v{}'.format(self._software_version), (700, 472),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
 
