@@ -19,7 +19,7 @@ import argparse as ap
 import config
 import logger
 import manager
-
+import netifaces
 
 # DEFAULT FILE NAMES
 _configfile_ = 'anacase.ini'
@@ -45,6 +45,11 @@ def get_start_arguments():
     return defaults
 
 
+def get_mac_address(port):
+    mac = netifaces.ifaddresses(port)[netifaces.AF_LINK]
+    return str.upper(mac[0]['addr'][12:14]) + str.upper(mac[0]['addr'][15:17])
+
+
 def main():
     """ MAIN APP """
     master_config = get_start_arguments()
@@ -52,13 +57,16 @@ def main():
     config.init(master_config['config_file'])
     config.set_section('GLOBAL')
     _version = config.key['version']
+    _port = config.key['port']
     logger.level(config.key['log_level'])
     app = manager.App(camera_data=config.set_section('CAMERA'),
                       display_data=config.set_section('DISPLAY'),
                       led_data=config.set_section('LED'),
                       buzzer_data=config.set_section('BUZZER'),
                       random_data=config.set_section('STATS'),
-                      version=_version)
+                      version=_version,
+                      port=get_mac_address(_port)
+                      )
     while app.run():
         pass
     app.close()

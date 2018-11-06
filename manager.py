@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 class App:
     """ Manage raspi APP """
 
-    def __init__(self, camera_data, display_data, led_data, buzzer_data, random_data, version):
+    def __init__(self, camera_data, display_data, led_data, buzzer_data, random_data, version, port):
         log.info('starting APP version "{}"'.format(version))
         try:
             self.display = display.Display()
@@ -44,6 +44,7 @@ class App:
             self._bag_select = float(display_data['bag_select'])
             self._image_template = display_data['image_template']
             self._image_bag = display_data['image_bag']
+            self._port = port
             self._bag_datetime = datetime.datetime.now()
             self._mode_name = ['RUN', 'VIEW']
             self._mode_active = 0
@@ -167,6 +168,10 @@ class App:
             cv2.putText(self._frame, 'operator ack counter', (50, 330),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
             cv2.putText(self._frame, '{:04d}'.format(self._stats.ack), (50, 370),
+                        cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
+            cv2.putText(self._frame, 'id', (400, 330),
+                        cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
+            cv2.putText(self._frame, '{}'.format(self._port), (400, 370),
                         cv2.FONT_HERSHEY_DUPLEX, 1.4, white_color, 1)
             cv2.putText(self._frame, 'v{}'.format(self._software_version), (700, 472),
                         cv2.FONT_HERSHEY_PLAIN, 1.2, low_color, 1)
