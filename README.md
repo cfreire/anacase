@@ -25,6 +25,7 @@ Counter and random sampler of moving objects, using python computer vision (open
     $ sudo apt-get install build-essential cmake git pkg-config
     $ sudo apt install -y libatlas-base-dev gfortran libjpeg-dev  \ 
       libpng-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libqt4-dev
+    $ sudo apt install python3-netifaces
     $ sudo pip3 install imutils
 ---
 **Verify python libs**  
