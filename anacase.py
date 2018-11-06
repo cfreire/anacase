@@ -46,8 +46,12 @@ def get_start_arguments():
 
 
 def get_mac_address(port):
-    mac = netifaces.ifaddresses(port)[netifaces.AF_LINK]
-    return str.upper(mac[0]['addr'][12:14]) + str.upper(mac[0]['addr'][15:17])
+    try:
+        mac = netifaces.ifaddresses(port)[netifaces.AF_LINK]
+        # get last 4 digits of mac addr for 'port' interface
+        return str.upper(mac[0]['addr'][12:14]) + str.upper(mac[0]['addr'][15:17])
+    except ValueError:
+        return '----'
 
 
 def main():
