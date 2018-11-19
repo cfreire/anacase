@@ -9,6 +9,9 @@ Counter and random sampler of moving objects, using python computer vision (open
 * Buzzer (12v)
 * Leds (bicolor red/green)
 
+## Screenshots
+![screenshots-1](/screenshots/screenshot-1.png)
+
 ## Installing
 
 ### Create USB Stick
